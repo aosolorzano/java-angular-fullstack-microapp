@@ -1,0 +1,26 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+
+Resources:
+  TimerServiceEcsSecurityGroupIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      IpProtocol: tcp
+      Description: 'Allow private link connections on port 8080 for our ecs services.'
+      FromPort: 80
+      GroupId: !GetAtt
+        - PrivateIntegrationsTutorialServiceSecurityGroup334FF7AF
+        - GroupId
+      SourceSecurityGroupId: !GetAtt
+        - PrivateIntegrationsTutorialServiceLBSecurityGroup22BA351A
+        - GroupId
+      ToPort: 8080
+

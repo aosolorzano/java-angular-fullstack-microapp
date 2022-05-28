@@ -1,0 +1,7 @@
+{
+  "name": "angular-timer-service-ionic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

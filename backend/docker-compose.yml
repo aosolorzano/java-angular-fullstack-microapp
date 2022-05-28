@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  tasks:
+    image: aosolorzano/java-timer-service-quarkus:1.1.0-SNAPSHOT
+    environment:
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      TABLE_TASK_NAME: 'Task'
+      TIMER_SERVICE_DB_CLUSTER_SECRET: '{"dbClusterIdentifier":"timerservicedbcluster","password":"postgres123","dbname":"TimerServiceDB","engine":"postgres","port":5432,"host":"192.168.59.100","username":"postgres"}'
+    networks:
+      - tasks-network
+    depends_on:
+      - postgres
+
+  nginx:
+    image: nginx:1.21.6
+    container_name: nginx-webserver
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - tasks
+    ports:
+      - "80:80"
+    networks:
+      - tasks-network
+
+  postgres:
+    image: postgres:13.6
+    container_name: timer-service-postgres
+    environment:
+      - POSTGRES_DB=TimerServiceDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    ports:
+      - "5432:5432"
+    networks: 
+      - tasks-network
+
+networks:
+  tasks-network:
+    driver: bridge

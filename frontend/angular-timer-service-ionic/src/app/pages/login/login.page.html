@@ -1,0 +1,15 @@
+<ion-header mode="ios" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title color="primary">Sign In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <amplify-authenticator>
+    <ng-template amplifySlot="header">
+      <div style="padding: var(--amplify-space-large); text-align: center">
+        <img class="amplify-image" alt="Amplify logo" src="https://docs.amplify.aws/assets/logo-dark.svg"/>
+      </div>
+    </ng-template>
+  </amplify-authenticator>
+</ion-content>
