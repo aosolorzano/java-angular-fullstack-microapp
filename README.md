@@ -1,5 +1,14 @@
-## What is it?
-This project uses the Quarkus Framework to generate CRUD operations over Tasks records stored on AWS DynamoDB.
+# Timer Service: A Quartz microservice that run Cron Jobs on AWS Fargate ECS.
+- **Author**: Andres Solorzano.
+- **Level**: Advanced.
+- **Technologies**: Ionic, Angular, Amplify, Quarkus, Java, AWS Copilot and CloudFormation.
+
+## Description
+This project uses the Quarkus Framework to perform CRUD operations over Tasks records stored on an AWS DynamoDB table.
+This Tasks also realises CRUD operations against Quartz Cron Jobs stored on AWS Aurora Postgres DB to maintain state among Jobs in a clustered environmend.
+
+The following image shows the overall architecture of the application on AWS.
+![](infra/images/aws-solution-architecture.png)
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
@@ -13,7 +22,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 7. [Maven](https://maven.apache.org/download.cgi).
 8. [Docker](https://www.docker.com/products/docker-desktop/) and [Docker Compose](https://github.com/docker/compose).
 
-## Local Environment configuration
+# BACKEND
+## Deploying Timer Service Locally
 ### Running a Postgres instance locally
 You need to make sure that you have a Postgres instance running locally. To set up a Postgres database with Docker, execute the following command in a different terminal tab:
 ```
@@ -40,22 +50,14 @@ This starts 2 instances of the Timer Service application alongside 1 instance of
 ### Timer Service interaction
 With your Docker service IP, you can use the Postman tool to send HTTP requests to your Timer Service application.
 
-## Deploying ALL resources to AWS
+## Deploying Timer Service to AWS
 Execute the following script located at project's root folder:
 ```
 ./run-scripts
 ```
-This script will show you an option's menu where you can select the steps to deploy the Timer Service on AWS.
+This script will show you an option's menu where you can select various steps to deploy the Timer Service on AWS.
 
-## Related Guides
-- Amazon DynamoDB ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/amazon-dynamodb.html)): Connect to Amazon DynamoDB datastore.
-- Quartz ([guide](https://quarkus.io/guides/quartz)): Schedule clustered tasks with Quartz.
-
-## RESTEasy Reactive
-Easily start your Reactive RESTful Web Services
-[Related guide section.](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-## Some Quarkus Important Commands
+## Quarkus Important Commands
 ### Live coding with Quarkus
 The Maven Quarkus plugin provides a development mode that supports
 live coding. To try this out:
@@ -101,3 +103,102 @@ You can then execute your native executable with:
 ./target/java-timer-service-quarkus-1.1.0-SNAPSHOT-runner
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+
+# FRONTEND
+## Deploying Timer Service Locally
+First, you must configure Amplify into the Ionic project:
+```
+amplify init
+```
+Then, you must configure the authentication provider with the following command:
+```
+amplify add auth
+```
+The following image shows you some configuration properties that I used to configure Cognito:
+![](infra/images/amplify-auth-cognito-options.png)
+
+Then, install Amplify dependencies:
+```
+npm install aws-amplify @aws-amplify/ui-angular
+```
+Add the following line at the end of the “src/global.scss“ file:
+```
+@import '~@aws-amplify/ui-angular/theme.css';
+```
+When working with underlying aws-js-sdk, the "node" package should be included in the types' compiler option. 
+Update the “tsconfig.app.json” file:
+```
+"compilerOptions": {
+    "types" : ["node"]
+}
+```
+If you are using Angular 6 or above, you may need to add the following to the top of the “src/polyfills.ts” file:
+```
+(window as any).global = window;
+
+(window as any).process = {
+  env: { DEBUG: undefined },
+};
+```
+In the “package.json” file, update the “build“ directive to let Amplify build the project in production mode:
+```
+"build": "ng run app:build:production",
+```
+
+## Updating Angular dependencies
+Verify the angular versions that can be updated inside the project:
+```
+ng update
+```
+Try to update the corresponding packages showed in the last command output. For example:
+```
+ng update @angular/cli @angular/core --allow-dirty --force
+```
+And those Angular dependencies will be updated.
+
+## Other Ionic commands
+To create a new ionic project using a blank template;
+```
+ionic start <project-name> blank --type=angular
+```
+To create a new angular module with a routing file;
+```
+ionic g module shared/components --routing
+```
+To create a new component (not include a module and routing file):
+```
+ionic g component shared/components/header --spec=false
+```
+To create a new page component without the spec file:
+```
+ionic g page shared/pages/login --spec=false
+```
+If you want to only visualize the files that will be created, add the dry-run directive:
+```
+ionic g page shared/pages/login --spec=false --dry-run
+```
+
+## Animate CSS
+[Animate.css](https://animate.style/) is a library of ready-to-use, cross-browser animations for use in your web projects.
+```
+npm install animate.css --save
+```
+Modify the "global.scss" file to add the following code:
+```
+@import "~animate.css/animate.min.css";
+```
+
+## Ionic DateTime
+For this component, we must install the "date-fns" and "date-fn-tz" dependency for datetime validation and manipulation:
+```
+npm install date-fns --save
+npm install date-fns-tz --save
+```
+
+## Related Guides
+- Amazon DynamoDB ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/amazon-dynamodb.html)): Connect to Amazon DynamoDB datastore.
+- Quartz ([guide](https://quarkus.io/guides/quartz)): Schedule clustered tasks with Quartz.
+
+## RESTEasy Reactive
+Easily start your Reactive RESTful Web Services
+[Related guide section.](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)

@@ -1,0 +1,13 @@
+<ion-header mode="ios" class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons *ngIf="showBackButton" slot="start">
+      <ion-button href="/app/tasks/main">
+        <ion-icon name="arrow-back"></ion-icon>
+        <ion-label>Back</ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-capitalize">
+      {{ pageTitle }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>

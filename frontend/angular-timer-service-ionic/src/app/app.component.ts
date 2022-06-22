@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Logger} from 'aws-amplify';
-import {AuthenticationService} from './services/auth/authentication.service';
+import {Logger} from "aws-amplify";
+import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
+import {AuthenticationService} from "./auth/services/authentication/authentication.service";
+import {AppRoutesEnum} from "./shared/utils/enums/app.routes.enum";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -9,33 +11,34 @@ import {AuthenticationService} from './services/auth/authentication.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  public appPages = [
-    {title: 'Tasks', url: '/pages/tasks', icon: 'task'},
-  ];
-  public loggedIn = false;
-  private logger = new Logger('AppComponent');
 
-  constructor(private router: Router, private authService: AuthenticationService) {
-  }
+  public loggedIn = false;
+  public username = '';
+  public appPages = [
+    { title: 'Tasks', url: '/app/tasks/main', icon: 'calendar-number' }
+  ];
+  private logger = new Logger('AppComponent', LOG_TYPE.DEBUG);
+
+  constructor(private router: Router, private authService: AuthenticationService) { }
 
   public async ngOnInit() {
     this.logger.debug('ngOnInit - START');
     this.authService.getAuthenticationState().subscribe(async userSignedIn => {
-      this.logger.debug('Auth Service changed. User SignedIn?: ', userSignedIn);
+      this.logger.debug('Auth Service changed. Is the user signed in?: ', userSignedIn);
       if (userSignedIn) {
-        if (!this.loggedIn) {
-          this.loggedIn = true;
-        }
+        this.username = await this.authService.getUsername();
+        this.loggedIn = true;
       }
     });
     this.logger.debug('ngOnInit - END');
   }
 
   public async signOut() {
-    this.logger.debug('userSignedOut() - START');
+    this.logger.debug('signOut() - START');
     await this.authService.userSignedOut();
     this.loggedIn = false;
-    await this.router.navigateByUrl('/login');
-    this.logger.debug('userSignedOut() - END');
+    await this.router.navigateByUrl(AppRoutesEnum.loginPage);
+    this.logger.debug('signOut() - END');
   }
+
 }

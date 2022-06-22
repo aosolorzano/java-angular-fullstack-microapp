@@ -9,12 +9,6 @@
     <name>timer-service-micro-app</name>
     <description>Parent POM for the Timer Service.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    </properties>
-
     <modules>
         <module>backend</module>
     </modules>

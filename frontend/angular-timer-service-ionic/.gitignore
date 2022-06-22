@@ -31,7 +31,7 @@ npm-debug.log*
 /plugins
 /www
 
-#amplify-do-not-edit-begin
+#amplify-do-not-update-begin
 amplify/
 build/
 dist/
@@ -45,4 +45,4 @@ amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
 **.sample
-#amplify-do-not-edit-end
+#amplify-do-not-update-end

@@ -2,25 +2,22 @@ Parameters:
   App:
     Type: String
     Description: Your application's name.
+    Default: 'timerservice'
   Env:
     Type: String
     Description: The environment name your service, job, or workflow is being deployed to.
-  Name:
-    Type: String
-    Description: The name of the service, job, or workflow being deployed.
+    Default: 'dev'
 
 Resources:
   TimerServiceEcsSecurityGroupIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
+      Description: 'Allow connections from the API-GW VPCLink to port 8080.'
       IpProtocol: tcp
-      Description: 'Allow private link connections on port 8080 for our ecs services.'
-      FromPort: 80
-      GroupId: !GetAtt
-        - PrivateIntegrationsTutorialServiceSecurityGroup334FF7AF
-        - GroupId
-      SourceSecurityGroupId: !GetAtt
-        - PrivateIntegrationsTutorialServiceLBSecurityGroup22BA351A
-        - GroupId
+      CidrIp: '10.0.0.0/16'
+      FromPort: 8080
       ToPort: 8080
+      GroupId:
+        Fn::ImportValue:
+          !Sub '${App}-${Env}-EnvironmentSecurityGroup'
 

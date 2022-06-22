@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import {AuthGuardService} from './services/auth/auth-guard.service';
+import {NgModule} from '@angular/core';
+import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
+import {AuthenticationGuardService} from "./auth/services/authentication/authentication-guard.service";
 
 const routes: Routes = [
   {
@@ -9,13 +9,22 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    path: 'app/auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'app',
-    canActivate: [AuthGuardService],
-    loadChildren: () => import('./pages/pages-routing.module').then(m => m.PagesRoutingModule)
+    path: 'app/tasks',
+    canActivate: [AuthenticationGuardService],
+    loadChildren: () => import('./tasks/tasks.module').then(m => m.TasksModule)
+  },
+  {
+    path: 'app/error',
+    canActivate: [AuthenticationGuardService],
+    loadChildren: () => import('./shared/shared.module').then(m => m.SharedModule)
+  },
+  {
+    path: '**',
+    redirectTo: 'app/error/404'
   }
 ];
 
@@ -25,4 +34,5 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

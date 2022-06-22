@@ -21,8 +21,29 @@ Resources:
     Type: 'AWS::ApiGatewayV2::Api'
     Properties:
       Name: !Sub '${App}-${Env}-${Name}'
-      Description: 'The Timer Service API Gateway.'
+      Description: 'The API Gateway for the Timer Service.'
       ProtocolType: HTTP
+      Version: 'v1'
+      CorsConfiguration:
+        AllowCredentials: true
+        AllowHeaders:
+          - 'Content-Type'
+          - 'X-Amz-Date'
+          - 'Authorization'
+          - 'X-Api-Key'
+          - 'X-Amz-Security-Token'
+        AllowMethods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        AllowOrigins:
+          - 'http://localhost:8100'
+        ExposeHeaders:
+          - 'Date'
+          - 'x-api-id'
+        MaxAge: 300
 
   TimerServiceVpcLink:
     Type: 'AWS::ApiGatewayV2::VpcLink'

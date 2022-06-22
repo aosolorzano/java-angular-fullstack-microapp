@@ -1,32 +1,42 @@
 #!/bin/bash
 
-cd scripts/ || {
-  echo "Error moving to the 'scripts' directory."
+cd infra/ || {
+  echo "Error moving to the 'infra' directory."
   exit 1
 }
 
-
-
-function create-ecs-cluster-and-log-group() {
+function crateFrontend() {
   echo ""
-  sh ./7_create-ecs-cluster-and-log-group.sh
+  sh ./1_create-frontend.sh
   echo "DONE!"
 }
 
-function create-ecs-task-and-deploy-service() {
+function createBackend() {
   echo ""
-  sh ./8_create-ecs-task-and-deploy-service.sh
+  sh ./2_create-backend.sh
   echo "DONE!"
 }
 
-function deploy_all_resources() {
+function deleteFrontend() {
   echo ""
-  sh ./9_deploy-all-resources-to-aws.sh
+  sh ./3_delete-frontend.sh
+  echo "DONE!"
 }
 
-function delete_all_resources() {
+function deleteBackend() {
   echo ""
-  sh ./10_delete-all-resources-from-aws.sh
+  sh ./4_delete-backend.sh
+  echo "DONE!"
+}
+
+function createAll() {
+  echo ""
+  echo "DONE!"
+}
+
+function deleteAll() {
+  echo ""
+  echo "DONE!"
 }
 
 # Main Menu
@@ -35,67 +45,43 @@ menu() {
   *********************
   ***** Main Menu *****
   *********************
-  1) Create Task table on DynamoDB.
-  2) Create Postgres database on Aurora Serverless.
-  3) Build and run Timer Service as Quarkus native image container.
-  4) Push the Timer Service image to AWS ECR.
-  5) Create Timer Service required IAM policies and roles.
-  6) Create ECS Service required IAM policies and roles.
-  7) Create ECS Cluster and Log Group.
-  8) Create ECS Task and deploy the Timer Service.
-  9) Deploy ALL resources on AWS ECS.
-  d) DELETE all resources from AWS.
+  1) Create the Frontend.
+  2) Create the Backend.
+  3) Delete the Frontend.
+  4) Delete the Backend.
+  a) Deploy ALL.
+  d) DELETE all.
   q) Quit/Exit.
   "
   read -r -p 'Choose an option: ' option
   case $option in
   1)
-    create_dynamodb_table
+    crateFrontend
     clear
     menu
     ;;
   2)
-    create_aurora_postgres_db
+    createBackend
     clear
     menu
     ;;
   3)
-    quarkus_native_container_image
+    deleteFrontend
     clear
     menu
     ;;
   4)
-    push_quarkus_native_image_to_ecr
+    deleteBackend
     clear
     menu
     ;;
-  5)
-    timer_services_required_iam_resources
-    clear
-    menu
-    ;;
-  6)
-    ecs_required_iam_resources
-    clear
-    menu
-    ;;
-  7)
-    create-ecs-cluster-and-log-group
-    clear
-    menu
-    ;;
-  8)
-    create-ecs-task-and-deploy-service
-    clear
-    menu
-    ;;
-  9)
-    deploy_all_resources
+  a)
+    createAll
     clear
     menu
     ;;
   d)
-    delete_all_resources
+    deleteAll
     clear
     menu
     ;;

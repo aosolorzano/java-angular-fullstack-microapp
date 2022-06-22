@@ -9,6 +9,6 @@
         <Root level="INFO">
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
-        <Logger name="com.hiperium.java.faker.data" level="DEBUG"/>
+        <Logger name="com.hiperium.faker.data" level="INFO"/>
     </Loggers>
 </Configuration>
