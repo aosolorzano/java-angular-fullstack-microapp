@@ -9,8 +9,8 @@ import {MinutePipe} from "./pipes/minute.pipe";
 import {IonicModule} from "@ionic/angular";
 import {ReactiveFormsModule} from "@angular/forms";
 import {SearchComponent} from "./components/search/search.component";
-import {ListComponent} from "./pages/list/list.component";
 import {TaskComponent} from "./pages/task/task.component";
+import {TasksComponent} from "./pages/tasks/tasks.component";
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import {TaskComponent} from "./pages/task/task.component";
     HourPipe,
     MinutePipe,
     SearchComponent,
-    ListComponent,
+    TasksComponent,
     TaskComponent,
   ],
   imports: [

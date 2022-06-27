@@ -31,14 +31,14 @@ export class LoginPage implements OnInit {
     this.logger.debug('listener() - START: ' + cognitoAuthEvent);
     switch (cognitoAuthEvent) {
       case 'signIn':
-        this.logger.debug('Cognito event data: ', data);
+        await this.authService.userSignedIn();
         await this.router.navigateByUrl(AppRoutesEnum.homePage);
         break;
       case 'signIn_failure':
         this.logger.debug('listener - User sign in failed');
         break;
     }
-    this.logger.debug('listener() - END: ' + cognitoAuthEvent);
+    this.logger.debug('listener() - END');
   };
 
 }

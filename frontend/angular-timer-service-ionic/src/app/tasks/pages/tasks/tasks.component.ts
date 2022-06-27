@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import {Observable} from "rxjs";
+import {Component, OnInit} from '@angular/core';
 import {Task} from "../../interfaces/task";
 import {Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
@@ -10,17 +9,17 @@ import {SearchComponent} from "../../components/search/search.component";
 import {AppRoutesEnum} from "../../../shared/utils/enums/app.routes.enum";
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  selector: 'app-tasks',
+  templateUrl: './tasks.component.html',
+  styleUrls: ['./tasks.component.scss'],
 })
-export class ListComponent implements OnInit {
+export class TasksComponent implements OnInit {
 
   public searchField: string = 'name';
   public searchInputMode: string = 'text';
   public searchText: string;
-  public tasks: Observable<Task[]> = null;
-  private logger = new Logger('ListComponent', LOG_TYPE.DEBUG);
+  public tasks: Task[] = null;
+  private logger = new Logger('TasksComponent', LOG_TYPE.DEBUG);
 
   constructor(private router: Router, private alertController: AlertController,
               public toastController: ToastController,
@@ -28,9 +27,11 @@ export class ListComponent implements OnInit {
               private taskService: TasksService) {
   }
 
-  public async ngOnInit() {
+  public ngOnInit() {
     this.logger.debug('ngOnInit() - START');
-    this.tasks = this.taskService.getTasks();
+    this.taskService.getTasks().subscribe(tasks => {
+      this.tasks = tasks;
+    });
     this.logger.debug('ngOnInit() - END');
   }
 
@@ -98,9 +99,7 @@ export class ListComponent implements OnInit {
   private async delete(task: Task) {
     this.logger.debug('delete() - START: ' + task.id);
     this.taskService.delete(task.id).subscribe(() => {
-      this.tasks.subscribe(tasks => {
-        return tasks.filter(t => t.id !== task.id);
-      });
+      this.tasks = this.tasks.filter(actualTask => actualTask.id !== task.id);
     });
     await this.presentToast();
     this.logger.debug('delete() - END');

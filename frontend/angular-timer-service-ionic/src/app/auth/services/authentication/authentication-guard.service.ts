@@ -14,12 +14,12 @@ export class AuthenticationGuardService implements CanActivate {
   constructor(private router: Router, private authService: AuthenticationService) {}
 
   public async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-    this.logger.debug('canActivate(): ', route, state);
+    this.logger.debug('canActivate() - START');
     const isUserLoggedIn = await this.authService.isAuthenticated();
-    this.logger.debug('validateUserSession(): is user logged in?: ', isUserLoggedIn);
     if (!isUserLoggedIn) {
       await this.router.navigateByUrl(AppRoutesEnum.loginPage);
     }
+    this.logger.debug('canActivate() - END');
     return isUserLoggedIn;
   }
 }

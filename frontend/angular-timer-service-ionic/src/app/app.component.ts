@@ -24,10 +24,11 @@ export class AppComponent implements OnInit {
   public async ngOnInit() {
     this.logger.debug('ngOnInit - START');
     this.authService.getAuthenticationState().subscribe(async userSignedIn => {
-      this.logger.debug('Auth Service changed. Is the user signed in?: ', userSignedIn);
       if (userSignedIn) {
         this.username = await this.authService.getUsername();
         this.loggedIn = true;
+      } else {
+        this.loggedIn = false;
       }
     });
     this.logger.debug('ngOnInit - END');
@@ -36,7 +37,6 @@ export class AppComponent implements OnInit {
   public async signOut() {
     this.logger.debug('signOut() - START');
     await this.authService.userSignedOut();
-    this.loggedIn = false;
     await this.router.navigateByUrl(AppRoutesEnum.loginPage);
     this.logger.debug('signOut() - END');
   }

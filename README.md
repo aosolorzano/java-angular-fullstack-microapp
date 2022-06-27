@@ -8,7 +8,7 @@ This project uses the Quarkus Framework to perform CRUD operations over Tasks re
 This Tasks also realises CRUD operations against Quartz Cron Jobs stored on AWS Aurora Postgres DB to maintain state among Jobs in a clustered environmend.
 
 The following image shows the overall architecture of the application on AWS.
-![](infra/images/aws-solution-architecture.png)
+![](infra/img/aws-solution-architecture.png)
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
@@ -22,7 +22,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 7. [Maven](https://maven.apache.org/download.cgi).
 8. [Docker](https://www.docker.com/products/docker-desktop/) and [Docker Compose](https://github.com/docker/compose).
 
-# BACKEND
+## BACKEND
 ## Deploying Timer Service Locally
 ### Running a Postgres instance locally
 You need to make sure that you have a Postgres instance running locally. To set up a Postgres database with Docker, execute the following command in a different terminal tab:
@@ -104,8 +104,8 @@ You can then execute your native executable with:
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
-# FRONTEND
-## Deploying Timer Service Locally
+## FRONTEND
+### Deploying Timer Service Locally
 First, you must configure Amplify into the Ionic project:
 ```
 amplify init
@@ -115,7 +115,7 @@ Then, you must configure the authentication provider with the following command:
 amplify add auth
 ```
 The following image shows you some configuration properties that I used to configure Cognito:
-![](infra/images/amplify-auth-cognito-options.png)
+![](infra/img/amplify-auth-cognito-options.png)
 
 Then, install Amplify dependencies:
 ```
@@ -145,7 +145,7 @@ In the “package.json” file, update the “build“ directive to let Amplify 
 "build": "ng run app:build:production",
 ```
 
-## Updating Angular dependencies
+### Updating Angular dependencies
 Verify the angular versions that can be updated inside the project:
 ```
 ng update
@@ -156,20 +156,20 @@ ng update @angular/cli @angular/core --allow-dirty --force
 ```
 And those Angular dependencies will be updated.
 
-## Other Ionic commands
+### Other Ionic commands
 To create a new ionic project using a blank template;
 ```
 ionic start <project-name> blank --type=angular
 ```
-To create a new angular module with a routing file;
+To create a new angular **module** with a routing file;
 ```
 ionic g module shared/components --routing
 ```
-To create a new component (not include a module and routing file):
+To create a new **component** (not include a module and routing file):
 ```
 ionic g component shared/components/header --spec=false
 ```
-To create a new page component without the spec file:
+To create a new **page** component without the spec file:
 ```
 ionic g page shared/pages/login --spec=false
 ```
@@ -177,8 +177,33 @@ If you want to only visualize the files that will be created, add the dry-run di
 ```
 ionic g page shared/pages/login --spec=false --dry-run
 ```
+To create a new angular **service** without the test file, you can execute the following:
+```
+ionic g service shared/services/storage --skipTests
+```
 
-## Animate CSS
+### Ionic Storage
+You need to install the storage component:
+```
+npm install @ionic/storage-angular
+```
+Then, edit your NgModule declaration in src/app/app.module.ts or in the module for the component you'll use the storage library in, and add IonicStorageModule as an import:
+```
+import { Drivers } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage-angular';
+
+@NgModule({
+  imports: [
+    IonicStorageModule.forRoot({
+     name: 'TimerServiceDB',
+     driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage]
+    }),
+  ]
+})
+export class AppModule { }
+```
+
+### Animate CSS
 [Animate.css](https://animate.style/) is a library of ready-to-use, cross-browser animations for use in your web projects.
 ```
 npm install animate.css --save
@@ -188,7 +213,7 @@ Modify the "global.scss" file to add the following code:
 @import "~animate.css/animate.min.css";
 ```
 
-## Ionic DateTime
+### Ionic DateTime
 For this component, we must install the "date-fns" and "date-fn-tz" dependency for datetime validation and manipulation:
 ```
 npm install date-fns --save

@@ -26,7 +26,7 @@
 
 <ion-content class="ion-padding" [fullscreen]="true">
   <ion-list lines="none">
-    <ion-item-sliding *ngFor="let task of (tasks | async) | search:searchText:searchField">
+    <ion-item-sliding *ngFor="let task of tasks | search:searchText:searchField">
       <ion-item-options side="start">
         <ion-item-option (click)="details(task)">
           <ion-icon slot="icon-only" name="reader-outline"></ion-icon>

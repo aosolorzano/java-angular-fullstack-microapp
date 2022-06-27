@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {TaskComponent} from "./pages/task/task.component";
-import {ListComponent} from "./pages/list/list.component";
+import {TasksComponent} from "./pages/tasks/tasks.component";
 
 const routes: Routes = [
   {
@@ -9,7 +9,7 @@ const routes: Routes = [
     children: [
       {
         path: 'main',
-        component: ListComponent
+        component: TasksComponent
       },
       {
         path: 'create',
