@@ -5,14 +5,14 @@ cd ../frontend/angular-timer-service-ionic/ || {
   exit 1
 }
 
-echo "INSTALLING NODE DEPENDENCIES..."
+echo "INSTALLING DEPENDENCIES..."
 npm install
 
 echo "INITIALIZING AMPLIFY..."
 amplify init
 
-echo "ADDING AMPLIFY AUTHENTICATION..."
+echo "ADDING AMPLIFY AUTHENTICATION SERVICE..."
 amplify add auth
 
-echo "PUSHING AMPLIFY CHANGES TO AWS..."
+echo "CREATING THE AMPLIFY APP ON AWS..."
 amplify push

@@ -6,13 +6,13 @@ cd ../frontend/angular-timer-service-ionic/ || {
 }
 
 echo ""
-echo "The following commands will ask you for the values of AppClientID and UserPoolID."
-echo "You can find these values in the CloudFormation Console selecting stack created by Amplify for the Auth service."
+echo "The following commands will ask you for AppClientIDWeb and UserPoolID values from AWS."
+echo "Please go to CloudFormation Console, and select the stack created by Amplify for the Auth Service. In the OUTPUTS tab, you will find the AppClientIDWeb and UserPoolID values."
 echo "[Press enter to continue...]"
 read -r
 
-read -r -p 'Enter the User Pool App Client ID: ' app_client_id
-if [ -z "$app_client_id" ]
+read -r -p 'Enter the User Pool App Client ID: ' app_client_id_web
+if [ -z "$app_client_id_web" ]
 then
   echo 'Not value entered.'
   exit 0;
@@ -32,6 +32,6 @@ aws cloudformation update-stack                                     \
     ParameterKey=App,ParameterValue=timerservice                    \
     ParameterKey=Env,ParameterValue=dev                             \
     ParameterKey=Name,ParameterValue=ApiGateway                     \
-    ParameterKey=AppClientID,ParameterValue="$app_client_id"        \
+    ParameterKey=AppClientID,ParameterValue="$app_client_id_web"        \
     ParameterKey=UserPoolID,ParameterValue="$user_pool_id"          \
   --capabilities CAPABILITY_NAMED_IAM

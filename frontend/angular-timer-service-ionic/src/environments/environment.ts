@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   timeZone: 'America/Guayaquil',
-  apiUrl: 'https://gx1i6e42nc.execute-api.us-east-1.amazonaws.com'
+  apiUrl: 'https://g8caldadv2.execute-api.us-east-1.amazonaws.com'
 };
 
 /*

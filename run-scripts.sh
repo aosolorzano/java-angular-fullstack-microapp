@@ -5,84 +5,93 @@ cd infra/ || {
   exit 1
 }
 
-function crateFrontend() {
+function createBackend() {
   echo ""
-  sh ./1_create-frontend.sh
+  sh ./1_create-backend.sh
   echo "DONE!"
 }
 
-function createBackend() {
+function crateFrontend() {
   echo ""
-  sh ./2_create-backend.sh
+  sh ./2_1-create-frontend.sh
+  sh ./2_2-update-api-with-authorizer.sh
+  sh ./2_3-build-frontend-app.sh
+  echo "DONE!"
+}
+
+function createFakerData() {
+  echo ""
+  sh ./3_create-faker-data.sh
   echo "DONE!"
 }
 
 function deleteFrontend() {
   echo ""
-  sh ./3_delete-frontend.sh
+  sh ./4_delete-frontend.sh
   echo "DONE!"
 }
 
 function deleteBackend() {
   echo ""
-  sh ./4_delete-backend.sh
+  sh ./5_delete-backend.sh
   echo "DONE!"
 }
 
 function createAll() {
-  echo ""
+  createBackend
+  crateFrontend
   echo "DONE!"
 }
 
 function deleteAll() {
-  echo ""
+  deleteFrontend
+  deleteBackend
   echo "DONE!"
 }
 
 # Main Menu
 menu() {
   echo -ne "
-  *********************
-  ***** Main Menu *****
-  *********************
-  1) Create the Frontend.
-  2) Create the Backend.
-  3) Delete the Frontend.
-  4) Delete the Backend.
-  a) Deploy ALL.
-  d) DELETE all.
+  *************************
+  ******* Main Menu *******
+  *************************
+  1) Create the Backend.
+  2) Create the Frontend.
+  3) Create Faker Data.
+  4) Delete the Frontend.
+  5) Delete the Backend.
+  c) CREATE ALL.
+  d) DELETE ALL.
   q) Quit/Exit.
   "
   read -r -p 'Choose an option: ' option
   case $option in
   1)
-    crateFrontend
-    clear
+    createBackend
     menu
     ;;
   2)
-    createBackend
-    clear
+    crateFrontend
     menu
     ;;
   3)
-    deleteFrontend
-    clear
+    createFakerData
     menu
     ;;
   4)
+      deleteFrontend
+      menu
+      ;;
+  5)
     deleteBackend
-    clear
     menu
     ;;
-  a)
+  c)
     createAll
-    clear
     menu
     ;;
   d)
     deleteAll
-    clear
     menu
     ;;
   q)

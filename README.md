@@ -104,6 +104,53 @@ You can then execute your native executable with:
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
+## Deploying Timer Service on AWS
+To deploy the Timer Service on AWS, execute the following script located at project's root folder:
+```
+copilot init                      \
+  --app timerservice              \
+  --name api                      \
+  --type 'Backend Service'        \
+  --dockerfile './Dockerfile'     \
+  --port 8080                     \
+  --deploy
+```
+This command also deploys the Task table on DynamoDB and the Aurora PostgreSQL on AWS. This 2 services are part of the addons of the Copilot configuration.
+
+### Other Copilot ECS important commands
+List all of your AWS Copilot applications.
+```
+copilot app ls
+```
+Show information about the environments and services in your application.
+```
+copilot app show
+```
+Show information about your environments.
+```
+copilot env ls
+```
+Show information about the service, including endpoints, capacity and related resources.
+```
+copilot svc show
+```
+List of all the services in an application.
+```
+copilot svc ls
+```
+Show logs of a deployed service.
+```
+copilot svc logs --follow
+```
+Show service status.
+```
+copilot svc status
+```
+To delete and clean up all resources.
+```
+copilot app delete
+```
+
 ## FRONTEND
 ### Deploying Timer Service Locally
 First, you must configure Amplify into the Ionic project:
@@ -156,7 +203,7 @@ ng update @angular/cli @angular/core --allow-dirty --force
 ```
 And those Angular dependencies will be updated.
 
-### Other Ionic commands
+### Other Ionic important commands
 To create a new ionic project using a blank template;
 ```
 ionic start <project-name> blank --type=angular
