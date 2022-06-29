@@ -7,8 +7,8 @@ import {Component, Input} from '@angular/core';
 })
 export class HeaderComponent {
 
-  @Input() pageTitle: string | '';
-  @Input() showBackButton: boolean | false;
+  @Input() pageTitle: string;
+  @Input() showBackButton: boolean;
 
   constructor() {
     //Nothing to implement.
