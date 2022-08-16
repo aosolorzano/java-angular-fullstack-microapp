@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   timeZone: 'America/Guayaquil',
-  apiUrl: 'https://g8caldadv2.execute-api.us-east-1.amazonaws.com'
+  apiUrl: 'http://localhost'
 };
 
 /*

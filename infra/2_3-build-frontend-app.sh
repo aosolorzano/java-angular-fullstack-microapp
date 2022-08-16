@@ -13,7 +13,7 @@ read -r
 aws cloudformation describe-stacks --stack-name timerservice-apigateway --query "Stacks[0].Outputs[1].OutputValue" | tr -d '"'
 
 echo ""
-echo "Paste the provided URL in the 'environment' files located in the 'src/environments/' directory."
+echo "Paste the provided URL in the 'environment.ts' file located in the 'src/environments/' directory."
 echo "Also, modify the 'timeZone' value with yours."
 echo "[Press enter to continue...]"
 read -r

@@ -39,7 +39,7 @@ With this IP, you can override the key value located inside the `TIMER_SERVICE_D
 ### Creating a container image of the Timer service
 You can create a native container image as follows:
 ```
-docker build -t aosolorzano/java-timer-service-quarkus:1.1.0-SNAPSHOT .
+docker build -t aosolorzano/java-timer-service-quarkus:1.0.0 .
 ```
 > **_IMPORTANT:_**  Before execute the Timer Service container, export your AWS credential to pass them to the "docker run" command:
 ```
@@ -100,7 +100,7 @@ mvn package -Pnative -Dquarkus.native.container-build=true
 ```
 You can then execute your native executable with:
 ```
-./target/java-timer-service-quarkus-1.1.0-SNAPSHOT-runner
+./target/java-timer-service-quarkus-1.0.0-runner
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
