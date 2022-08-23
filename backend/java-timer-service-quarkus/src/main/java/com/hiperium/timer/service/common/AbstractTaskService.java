@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Andres Solorzano
@@ -24,17 +23,11 @@ public abstract class AbstractTaskService {
 
     private static final HashMap<String, AttributeValue> TASK_ITEM_KEY = new HashMap<>();
 
-    private static String dynamodbTableName = "Task";
+    @ConfigProperty(name = "tasks.dynamodb.table.name")
+    String dynamodbTableName;
 
-    @ConfigProperty(name = "task.time.zone.id")
-    protected String zoneId;
-
-    static {
-        String dynamoTable = System.getenv("TABLE_TASK_NAME");
-        if (Objects.nonNull(dynamoTable) && !dynamoTable.isBlank()) {
-            dynamodbTableName = dynamoTable;
-        }
-    }
+    @ConfigProperty(name = "tasks.time.zone.id")
+    String zoneId;
 
     protected ScanRequest getScanRequest() {
         return ScanRequest.builder()

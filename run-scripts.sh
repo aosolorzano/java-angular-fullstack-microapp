@@ -1,65 +1,81 @@
 #!/bin/bash
 
-cd infra/ || {
-  echo "Error moving to the 'infra' directory."
+cd utils/scripts/ || {
+  echo "Error moving to the 'utils/scripts' directory."
   exit 1
+}
+
+function createFrontend() {
+  echo ""
+  sh ./1_create-amplify-frontend.sh
+  echo "DONE!"
 }
 
 function createBackend() {
   echo ""
-  sh ./1_create-backend.sh
+  sh ./2_create-copilot-backend.sh
   echo "DONE!"
 }
 
-function crateFrontend() {
+function createApiGateway() {
   echo ""
-  sh ./2_1-create-frontend.sh
-  sh ./2_2-update-api-with-authorizer.sh
-  sh ./2_3-build-frontend-app.sh
+  sh ./3_create-aws-api-gateway.sh
+  echo "DONE!"
+}
+
+function buildIonicApp() {
+  echo ""
+  sh ./4_build-ionic-for-production.sh
   echo "DONE!"
 }
 
 function createFakerData() {
   echo ""
-  sh ./3_create-faker-data.sh
-  echo "DONE!"
-}
-
-function deleteFrontend() {
-  echo ""
-  sh ./4_delete-frontend.sh
+  sh ./5_create-dynamodb-faker-data.sh
   echo "DONE!"
 }
 
 function deleteBackend() {
   echo ""
-  sh ./5_delete-backend.sh
+  sh ./6_delete-backend.sh
+  echo "DONE!"
+}
+
+function deleteFrontend() {
+  echo ""
+  sh ./7_delete-frontend.sh
   echo "DONE!"
 }
 
 function createAll() {
+  echo ""
+  createFrontend
   createBackend
-  crateFrontend
+  createApiGateway
+  buildIonicApp
+  createFakerData
   echo "DONE!"
 }
 
 function deleteAll() {
-  deleteFrontend
   deleteBackend
+  deleteFrontend
   echo "DONE!"
 }
 
 # Main Menu
 menu() {
-  echo -ne "
-  *************************
-  ******* Main Menu *******
-  *************************
-  1) Create the Backend.
-  2) Create the Frontend.
-  3) Create Faker Data.
-  4) Delete the Frontend.
-  5) Delete the Backend.
+  echo "
+  ***********************************
+  ************ Main Menu ************
+  ***********************************
+  1) Create Frontend.
+  2) Create Backend.
+  3) Create API Gateway.
+  4) Build App for Production.
+  5) Create DynamoDB Faker Data.
+  6) Delete Backend.
+  7) Delete Frontend.
   c) CREATE ALL.
   d) DELETE ALL.
   q) Quit/Exit.
@@ -67,23 +83,31 @@ menu() {
   read -r -p 'Choose an option: ' option
   case $option in
   1)
-    createBackend
+    createFrontend
     menu
     ;;
   2)
-    crateFrontend
+    createBackend
     menu
     ;;
   3)
-    createFakerData
+    createApiGateway
     menu
     ;;
   4)
-      deleteFrontend
-      menu
-      ;;
+    buildIonicApp
+    menu
+    ;;
   5)
+    createFakerData
+    menu
+    ;;
+  6)
     deleteBackend
+    menu
+    ;;
+  7)
+    deleteFrontend
     menu
     ;;
   c)
@@ -95,7 +119,9 @@ menu() {
     menu
     ;;
   q)
-    exit 0 ;;
+    clear
+    exit 0
+    ;;
   *)
     echo -e 'Wrong option.'
     clear

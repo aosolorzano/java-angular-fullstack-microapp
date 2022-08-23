@@ -1,0 +1,202 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name deployed using Copilot.
+    Default: 'timerservice'
+  Env:
+    Type: String
+    Description: The name of the ECS environment deployed using Copilot.
+    Default: 'dev'
+  Service:
+    Type: String
+    Description: The name of the ECS service deployed using Copilot.
+    Default: 'api'
+  Name:
+    Type: String
+    Description: The name of the service being deployed.
+    Default: 'ApiGateway'
+  AppClientID:
+    Type: String
+    Description: The client ID of the Cognito User Pool created by Amplify.
+  UserPoolID:
+    Type: String
+    Description: The ID of the Cognito User Pool created by Amplify.
+  AmplifyAppUrl:
+    Type: String
+    Description: The URL of the Amplify App for this environment.
+
+Resources:
+  TimerServiceHttpApi:
+    Type: 'AWS::ApiGatewayV2::Api'
+    Properties:
+      Name: !Sub '${App}-${Env}-${Name}'
+      Description: 'The API Gateway for the Timer Service.'
+      ProtocolType: HTTP
+      Version: 'v1'
+      CorsConfiguration:
+        AllowCredentials: true
+        AllowHeaders:
+          - 'Content-Type'
+          - 'Authorization'
+          - 'Accept'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        AllowOrigins:
+          - '${AmplifyAppUrl}'
+        ExposeHeaders:
+          - 'Date'
+        MaxAge: 172800
+
+  TimerServiceJwtAuthorizer:
+    Type: 'AWS::ApiGatewayV2::Authorizer'
+    Properties:
+      Name: !Sub '${App}-${Env}-${Name}Authorizer'
+      ApiId: !Ref TimerServiceHttpApi
+      AuthorizerType: JWT
+      IdentitySource:
+        - '$request.header.Authorization'
+      JwtConfiguration:
+        Audience:
+          - !Sub '${AppClientID}'
+        Issuer: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPoolID}'
+
+  TimerServiceVpcLink:
+    Type: 'AWS::ApiGatewayV2::VpcLink'
+    Properties:
+      Name: !Sub '${App}-${Env}-ApiGatewayVpcLink'
+      SubnetIds:
+        !Split [ ',', { 'Fn::ImportValue': !Sub '${App}-${Env}-PrivateSubnets' } ]
+      SecurityGroupIds: []
+
+  TimerServiceHttpApiIntegration:
+    Type: 'AWS::ApiGatewayV2::Integration'
+    Properties:
+      ApiId: !Ref TimerServiceHttpApi
+      Description: 'HTTP proxy integration for Timer Service API Gateway.'
+      IntegrationType: HTTP_PROXY
+      IntegrationMethod: ANY
+      ConnectionType: VPC_LINK
+      ConnectionId: !Ref TimerServiceVpcLink
+      IntegrationUri:
+        Fn::ImportValue:
+          !Sub '${App}-${Env}-${Service}-DiscoveryServiceARN'
+      PayloadFormatVersion: '1.0'
+
+  TimerServiceHttpApiDefaultRoute:
+    Type: 'AWS::ApiGatewayV2::Route'
+    Properties:
+      ApiId: !Ref TimerServiceHttpApi
+      RouteKey: '$default'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref TimerServiceJwtAuthorizer
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref TimerServiceHttpApiIntegration
+
+  TimerServiceCorsLambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  TimerServiceCorsLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Runtime: nodejs12.x
+      Role: !GetAtt TimerServiceCorsLambdaExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+              const response = {
+                  statusCode: 200,
+                  headers: {
+                    "Access-Control-Allow-Credentials": true,
+                    "Access-Control-Allow-Headers" : "Content-Type, Authorization, Accept",
+                    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE",
+                    "Access-Control-Allow-Origin": "https://master.d20y2g64618yf7.amplifyapp.com, http://localhost:8100",
+                    "Access-Control-Expose-Headers": "Date",
+                    "Access-Control-Max-Age": "172800"
+                  },
+                  body: JSON.stringify('CORS configuration for Timer Service API.')
+              };
+              return response;
+          };
+
+  TimerServiceHttpApiOptionsLambdaIntegration:
+    Type: 'AWS::ApiGatewayV2::Integration'
+    Properties:
+      ApiId: !Ref TimerServiceHttpApi
+      Description: 'Lambda proxy integration for HTTP OPTIONS method requests (CORS).'
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: OPTIONS
+      IntegrationUri: !GetAtt TimerServiceCorsLambdaFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  TimerServiceHttpApiOptionsRoute:
+    Type: 'AWS::ApiGatewayV2::Route'
+    Properties:
+      ApiId: !Ref TimerServiceHttpApi
+      RouteKey: 'OPTIONS /{proxy+}'
+      AuthorizationType: NONE
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref TimerServiceHttpApiOptionsLambdaIntegration
+
+  TimerServiceHttpApiInvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TimerServiceCorsLambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${TimerServiceHttpApi}/$default/OPTIONS/{proxy+}'
+
+  TimerServiceHttpApiLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      RetentionInDays: 7
+      LogGroupName: !Join
+        - '-'
+        - - !Ref TimerServiceHttpApi
+          - access-logs
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+
+  TimerServiceHttpApiStage:
+    Type: 'AWS::ApiGatewayV2::Stage'
+    Properties:
+      StageName: '$default'
+      Description: 'Development stage for Timer Service API Gateway.'
+      AutoDeploy: true
+      ApiId: !Ref TimerServiceHttpApi
+      AccessLogSettings:
+        DestinationArn: !GetAtt TimerServiceHttpApiLogGroup.Arn
+        Format: >-
+          $context.identity.sourceIp - - [$context.requestTime]
+          "$context.httpMethod $context.routeKey $context.protocol"
+          $context.status $context.responseLength $context.requestId
+          $context.integrationErrorMessage
+
+Outputs:
+  TimerServiceHttpApiId:
+    Value: !Ref TimerServiceHttpApi
+    Export:
+      Name: !Sub '${App}-${Env}-${Name}ID'
+  TimerServiceHttpApiInvokeURL:
+    Value: !Sub 'https://${TimerServiceHttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${App}-${Env}-${Name}Endpoint'

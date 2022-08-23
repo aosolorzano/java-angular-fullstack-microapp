@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hiperium</groupId>
     <artifactId>java-timer-service-quarkus</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>java-timer-service-quarkus</name>
     <description>Timer Service using Quartz and Quarkus framework for native executables.</description>
 
@@ -48,9 +48,17 @@
         <!-- QUARKUS -->
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-oidc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
         </dependency>
-        <!-- DYNAMODB -->
+        <!-- AWS -->
+        <dependency>
+            <groupId>io.quarkiverse.amazonservices</groupId>
+            <artifactId>quarkus-amazon-cognito-user-pools</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkiverse.amazonservices</groupId>
             <artifactId>quarkus-amazon-dynamodb</artifactId>

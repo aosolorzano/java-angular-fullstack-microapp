@@ -8,7 +8,7 @@ This project uses the Quarkus Framework to perform CRUD operations over Tasks re
 This Tasks also realises CRUD operations against Quartz Cron Jobs stored on AWS Aurora Postgres DB to maintain state among Jobs in a clustered environmend.
 
 The following image shows the overall architecture of the application on AWS.
-![](infra/img/aws-solution-architecture.png)
+![](utils/images/aws-solution-architecture.png)
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
@@ -23,71 +23,53 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 8. [Docker](https://www.docker.com/products/docker-desktop/) and [Docker Compose](https://github.com/docker/compose).
 
 ## BACKEND
-## Deploying Timer Service Locally
-### Running a Postgres instance locally
-You need to make sure that you have a Postgres instance running locally. To set up a Postgres database with Docker, execute the following command in a different terminal tab:
+## Deploying Timer Service Locally using Docker Compose
+Build the Timer Service container image:
 ```
-docker-compose up postgres
+docker-compose -f utils/docker/docker-compose.yml build 
 ```
-### Configure the IP address of your local Docker service
-You need to know th IP of your Docker service. In the case that you are using Minikube (like me), you can get your internal docker IP with the following command:
+Deploy the local cluster of containers using Docker Compose:
 ```
-minikube ip
+docker-compose -f utils/docker/docker-compose.yml up
 ```
-With this IP, you can override the key value located inside the `TIMER_SERVICE_DB_CLUSTER_SECRET` env variable in the docker-compose file.
 
-### Creating a container image of the Timer service
-You can create a native container image as follows:
+## Deploying Timer Service Locally using Docker
+Create a native Linux executable using Maven in the Java project folder:
 ```
-docker build -t aosolorzano/java-timer-service-quarkus:1.0.0 .
+mvn clean package -Pnative -DskipTests
 ```
-> **_IMPORTANT:_**  Before execute the Timer Service container, export your AWS credential to pass them to the "docker run" command:
+Then, create a native container image:
 ```
-docker-compose up --scale tasks=2 --scale nginx=1
+docker build -f docker/Dockerfile.native -t aosolorzano/java-timer-service-quarkus:1.1.0 .
 ```
-This starts 2 instances of the Timer Service application alongside 1 instance of the Nginx load balancer.
+Finally, deploy a local cluster using Docker Compose:
+```
+docker run -p 8080:8080 --name timer-service-quarkus aosolorzano/java-timer-service-quarkus:1.1.0
+```
+
+## Deploying local changes
+If you want to deploy your local changes after the initial setup, you can use the following command:
+```
+docker-compose -f utils/docker/docker-compose.yml up --build
+```
 
 ### Timer Service interaction
-With your Docker service IP, you can use the Postman tool to send HTTP requests to your Timer Service application.
+With your Docker service IP address, you can use the Postman tool to send HTTP requests to your Timer Service application.
 
 ## Deploying Timer Service to AWS
 Execute the following script located at project's root folder:
 ```
-./run-scripts
+run-scripts.sh
 ```
 This script will show you an option's menu where you can select various steps to deploy the Timer Service on AWS.
 
 ## Quarkus Important Commands
-### Live coding with Quarkus
-The Maven Quarkus plugin provides a development mode that supports
-live coding. To try this out:
-```
-mvn clean compile quarkus:dev
-```
-In this mode you can make changes to the code and have the changes immediately applied, by just refreshing your browser.
-
 ### Running the application in dev mode
 You can run your application in dev mode that enables live coding using:
 ```
 mvn clean compile quarkus:dev
 ```
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-### Packaging and running the application
-The application can be packaged using:
-```
-mvn clean package
-```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```
-mvn package -Dquarkus.package.type=uber-jar
-```
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
 ### Creating a native executable
 You can create a native executable using:
@@ -100,22 +82,9 @@ mvn package -Pnative -Dquarkus.native.container-build=true
 ```
 You can then execute your native executable with:
 ```
-./target/java-timer-service-quarkus-1.0.0-runner
+./target/java-timer-service-quarkus-1.1.0-runner
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
-
-## Deploying Timer Service on AWS
-To deploy the Timer Service on AWS, execute the following script located at project's root folder:
-```
-copilot init                      \
-  --app timerservice              \
-  --name api                      \
-  --type 'Backend Service'        \
-  --dockerfile './Dockerfile'     \
-  --port 8080                     \
-  --deploy
-```
-This command also deploys the Task table on DynamoDB and the Aurora PostgreSQL on AWS. This 2 services are part of the addons of the Copilot configuration.
 
 ### Other Copilot ECS important commands
 List all of your AWS Copilot applications.
@@ -162,7 +131,7 @@ Then, you must configure the authentication provider with the following command:
 amplify add auth
 ```
 The following image shows you some configuration properties that I used to configure Cognito:
-![](infra/img/amplify-auth-cognito-options.png)
+![](utils/images/amplify-auth-cognito-options.png)
 
 Then, install Amplify dependencies:
 ```

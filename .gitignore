@@ -15,7 +15,7 @@ build/
 hs_err_pid*
 
 ##############################
-## Amplify
+## Amplify User Account Data
 ##############################
 amplify/
 
@@ -115,3 +115,6 @@ Thumbs.db
 *.mov
 *.wmv
 *.mpg
+
+# Large data files
+*.db

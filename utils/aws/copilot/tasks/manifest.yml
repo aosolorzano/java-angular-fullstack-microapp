@@ -1,0 +1,34 @@
+# The manifest for the "tasks" service.
+# Read the full specification for the "Backend Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/backend-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+# Your service is reachable at "http://tasks.${COPILOT_SERVICE_DISCOVERY_ENDPOINT}:8080" but is not public.
+name: tasks
+type: Backend Service
+
+# Configuration for your containers and service.
+# Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/backend-service/#image-build
+image:
+  build:
+    dockerfile: ../../backend/java-timer-service-quarkus/Dockerfile.multistage-arm64
+  port: 8080
+
+cpu: 256                    # Number of CPU units for the task.
+memory: 512                 # Amount of memory in MiB used by the task.
+platform: linux/arm64       # See https://aws.github.io/copilot-cli/docs/manifest/backend-service/#platform
+count: 1                    # Number of tasks that should be running in your service.
+exec: true                  # Enable running commands in your container.
+
+command: [ "./application", "-Dquarkus.profile=aws", "-Dquarkus.http.host=0.0.0.0" ]
+
+# Pass environment variables as key value pairs.
+variables:
+  TASKS_TIME_ZONE_ID: "-05:00"
+  QUARKUS_OIDC_AUTH_SERVER_URL: "https://cognito-idp.us-east-1.amazonaws.com/cognito_user_pool_id"
+
+# You can override any of the values defined above by environment.
+environments:
+  dev:
+    variables:
+      QUARKUS_LOG_CATEGORY__CATEGORIES__LEVEL: DEBUG
