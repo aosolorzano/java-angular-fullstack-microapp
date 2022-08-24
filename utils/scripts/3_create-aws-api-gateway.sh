@@ -1,32 +1,33 @@
 #!/bin/bash
 
-echo ""
-read -r -p 'Please, enter the AWS profile used to provision the resources: [default] ' aws_profile
+read -r -p 'Please, enter the <AWS profile> used to provision the resources: [default] ' aws_profile
 if [ -z "$aws_profile" ]
 then
   aws_profile='default'
 fi
 
-echo ""
-read -r -p 'Please, enter the Cognito User Pool ID: ' user_pool_id
+read -r -p 'Please, enter the <Cognito User Pool> identifier: ' user_pool_id
 if [ -z "$user_pool_id" ]
 then
   echo 'Not value entered.'
   exit 0;
 fi
 
-read -r -p 'Please, enter the Cognito App Client ID: ' app_client_id_web
+read -r -p 'Please, enter the <Cognito User Pool Client Web> identifier: ' app_client_id_web
 if [ -z "$app_client_id_web" ]
 then
   echo 'Not value entered.'
   exit 0;
 fi
 
-read -r -p 'Please, enter the generated Amplify URL for the Timer Service App: ' amplify_app_url
-if [ -z "$amplify_app_url" ]
+read -r -p 'Please, enter the <Amplify ID> for the generated Timer Service App URL: ' amplify_app_id
+if [ -z "$amplify_app_id" ]
 then
   echo 'Not value entered.'
   exit 0;
+else
+  sed -i'.bak' -e "s/timer-service-amplify-id/$amplify_app_id/g" ../aws/cloudformation/ApiGatewayWithAuth.yml
+  sed -i'.bak' -e "s/timer-service-amplify-id/$amplify_app_id/g" ../../frontend/angular-timer-service-ionic/src/environments/environment.prod.ts
 fi
 
 echo ""
@@ -40,6 +41,5 @@ aws cloudformation create-stack                                         \
     ParameterKey=Name,ParameterValue=ApiGateway                         \
     ParameterKey=AppClientID,ParameterValue="$app_client_id_web"        \
     ParameterKey=UserPoolID,ParameterValue="$user_pool_id"              \
-    ParameterKey=AmplifyAppUrl,ParameterValue="$amplify_app_url"        \
   --capabilities CAPABILITY_NAMED_IAM                                   \
   --profile $aws_profile

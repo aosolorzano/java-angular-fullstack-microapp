@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   timeZone: 'America/Guayaquil',
-  apiUrl: '<timer-service-api-url>'
+  apiUrl: 'https://master.d1lkw4q12rmrqy.amplifyapp.com'
 };

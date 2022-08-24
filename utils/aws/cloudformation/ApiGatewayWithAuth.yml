@@ -10,7 +10,7 @@ Parameters:
   Service:
     Type: String
     Description: The name of the ECS service deployed using Copilot.
-    Default: 'api'
+    Default: 'tasks'
   Name:
     Type: String
     Description: The name of the service being deployed.
@@ -21,9 +21,6 @@ Parameters:
   UserPoolID:
     Type: String
     Description: The ID of the Cognito User Pool created by Amplify.
-  AmplifyAppUrl:
-    Type: String
-    Description: The URL of the Amplify App for this environment.
 
 Resources:
   TimerServiceHttpApi:
@@ -45,7 +42,7 @@ Resources:
           - PUT
           - DELETE
         AllowOrigins:
-          - '${AmplifyAppUrl}'
+          - 'https://timer-service-amplify-id.amplifyapp.com'
         ExposeHeaders:
           - 'Date'
         MaxAge: 172800
@@ -127,7 +124,7 @@ Resources:
                     "Access-Control-Allow-Credentials": true,
                     "Access-Control-Allow-Headers" : "Content-Type, Authorization, Accept",
                     "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE",
-                    "Access-Control-Allow-Origin": "https://master.d20y2g64618yf7.amplifyapp.com, http://localhost:8100",
+                    "Access-Control-Allow-Origin": "https://timer-service-amplify-id.amplifyapp.com",
                     "Access-Control-Expose-Headers": "Date",
                     "Access-Control-Max-Age": "172800"
                   },
