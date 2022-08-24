@@ -1,14 +1,14 @@
 # Timer Service: A Quartz microservice that run Cron Jobs on AWS Fargate ECS.
 - **Author**: Andres Solorzano.
 - **Level**: Advanced.
-- **Technologies**: Ionic, Angular, Amplify, Quarkus, Java, AWS Copilot and CloudFormation.
+- **Technologies**: Ionic, Angular, Java, GraalVM, Quarkus, Quartz, PostgreSQL, Docker, AWS SDK, Amplify, DynamoDB, API Gateway, Copilot and CloudFormation.
 
 ## Description
 This project uses the Quarkus Framework to perform CRUD operations over Tasks records stored on an AWS DynamoDB table.
 This Tasks also realises CRUD operations against Quartz Cron Jobs stored on AWS Aurora Postgres DB to maintain state among Jobs in a clustered environmend.
 
 The following image shows the overall architecture of the application on AWS.
-![](utils/images/aws-solution-architecture.png)
+![](utils/images/aws-solution-architecture-v2.png)
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
@@ -22,40 +22,6 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 7. [Maven](https://maven.apache.org/download.cgi).
 8. [Docker](https://www.docker.com/products/docker-desktop/) and [Docker Compose](https://github.com/docker/compose).
 
-## BACKEND
-## Deploying Timer Service Locally using Docker Compose
-Build the Timer Service container image:
-```
-docker-compose -f utils/docker/docker-compose.yml build 
-```
-Deploy the local cluster of containers using Docker Compose:
-```
-docker-compose -f utils/docker/docker-compose.yml up
-```
-
-## Deploying Timer Service Locally using Docker
-Create a native Linux executable using Maven in the Java project folder:
-```
-mvn clean package -Pnative -DskipTests
-```
-Then, create a native container image:
-```
-docker build -f docker/Dockerfile.native -t aosolorzano/java-timer-service-quarkus:1.1.0 .
-```
-Finally, deploy a local cluster using Docker Compose:
-```
-docker run -p 8080:8080 --name timer-service-quarkus aosolorzano/java-timer-service-quarkus:1.1.0
-```
-
-## Deploying local changes
-If you want to deploy your local changes after the initial setup, you can use the following command:
-```
-docker-compose -f utils/docker/docker-compose.yml up --build
-```
-
-### Timer Service interaction
-With your Docker service IP address, you can use the Postman tool to send HTTP requests to your Timer Service application.
-
 ## Deploying Timer Service to AWS
 Execute the following script located at project's root folder:
 ```
@@ -63,7 +29,24 @@ run-scripts.sh
 ```
 This script will show you an option's menu where you can select various steps to deploy the Timer Service on AWS.
 
-## Quarkus Important Commands
+## BACKEND Deployment
+### Deploying Timer Service Locally using Docker Compose
+Build the Timer Service container image:
+```
+docker-compose -f utils/docker/docker-compose.yml build
+```
+Deploy the local cluster of containers using Docker Compose:
+```
+docker-compose -f utils/docker/docker-compose.yml up
+```
+
+### Deploying local changes
+If you want to deploy your local changes after the initial setup, you can use the following command:
+```
+docker-compose -f utils/docker/docker-compose.yml up --build
+```
+
+## Other Quarkus Important Commands
 ### Running the application in dev mode
 You can run your application in dev mode that enables live coding using:
 ```
@@ -86,7 +69,7 @@ You can then execute your native executable with:
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
-### Other Copilot ECS important commands
+### Other Copilot ECS Important Commands
 List all of your AWS Copilot applications.
 ```
 copilot app ls
@@ -120,7 +103,7 @@ To delete and clean up all resources.
 copilot app delete
 ```
 
-## FRONTEND
+## FRONTEND Deployment
 ### Deploying Timer Service Locally
 First, you must configure Amplify into the Ionic project:
 ```
@@ -172,7 +155,7 @@ ng update @angular/cli @angular/core --allow-dirty --force
 ```
 And those Angular dependencies will be updated.
 
-### Other Ionic important commands
+## Other Ionic Important Commands and Configuration
 To create a new ionic project using a blank template;
 ```
 ionic start <project-name> blank --type=angular
