@@ -1,6 +1,6 @@
 package com.hiperium.faker.data.generic;
 
-import com.hiperium.faker.data.model.Task;
+import com.hiperium.faker.data.model.Tasks;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
@@ -23,8 +23,8 @@ public class ServiceGeneric {
                 .build();
     }
 
-    protected static DynamoDbTable<Task> taskTable = DYNAMO_DB_ENHANCED_CLIENT
-            .table("Task", TableSchema.fromBean(Task.class));
+    protected static DynamoDbTable<Tasks> taskTable = DYNAMO_DB_ENHANCED_CLIENT
+            .table("Tasks", TableSchema.fromBean(Tasks.class));
 
     protected ServiceGeneric() {}
 

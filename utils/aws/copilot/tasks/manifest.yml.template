@@ -20,8 +20,8 @@ image:
     timeout: 5s
     start_period: 0s
 
-cpu: 256                    # Number of CPU units for the task.
-memory: 512                 # Amount of memory in MiB used by the task.
+cpu: 256                    # Number of CPU units for the tasks.
+memory: 512                 # Amount of memory in MiB used by the tasks.
 platform: linux/arm64       # See https://aws.github.io/copilot-cli/docs/manifest/backend-service/#platform
 count: 1                    # Number of tasks that should be running in your service.
 exec: true                  # Enable running commands in your container.

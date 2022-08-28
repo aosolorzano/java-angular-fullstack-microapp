@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * @author Andres Solorzano
  */
-public final class DataUtil {
+public class DataUtil {
 
     private static final List<String> DAYS_OF_WEEK = List.of("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
     private static final char[] hexArray = "JavaFakerDynamoDB".toCharArray();

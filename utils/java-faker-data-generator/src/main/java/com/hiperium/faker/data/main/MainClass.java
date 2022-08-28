@@ -1,10 +1,10 @@
 package com.hiperium.faker.data.main;
 
 import com.hiperium.faker.data.service.TaskService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Console;
 import java.util.Properties;
 
 /**
@@ -17,26 +17,26 @@ public class MainClass {
     private static final String RANGE_SUPPORTED_EXCEPTION_MESSAGE = "The number entered exceed the range supported.";
 
     public static void main(String[] args) throws IllegalAccessException {
-        Console console = System.console();
-        if (null == console) {
-            throw new IllegalAccessException("Java Console is not available...");
+        String awsProfile = "default";
+        int requestedTasksNumber = MAX_NUM_TASKS_TO_GENERATE;
+
+        // Assign the required values.
+        if (args.length == 2) {
+            awsProfile = args[0];
+            String number = args[1];
+            if (StringUtils.isNumeric(number)) {
+                requestedTasksNumber = Integer.parseInt(number);
+                validateInputLimit(requestedTasksNumber);
+            } else {
+                throw new IllegalArgumentException("The number entered to generate the amount of data required, is not numeric.");
+            }
         }
-        String awsProfile = console.readLine("Enter your configured AWS profile name: [default] ");
-        if (!awsProfile.isBlank() && !awsProfile.trim().equalsIgnoreCase("default")) {
+
+        // Assigning the AWS profile to use.
+        if (!awsProfile.trim().equalsIgnoreCase("default")) {
             Properties props = System.getProperties();
             props.setProperty("aws.profile", awsProfile.trim());
-        } else {
-            awsProfile = "default";
         }
-        LOGGER.info("You are using the AWS profile: {}", awsProfile);
-
-        // READING USER INPUT
-        int requestedTasksNumber = getRequestedUserInput(console);
-        LOGGER.info("You have requested to generate {} Tasks.", requestedTasksNumber);
-
-        //DELETING PREVIOUS DATA
-        LOGGER.info("Deleting previous data...");
-        TaskService.deleteAllItems();
 
         // PERSISTING REQUESTED DATA
         LOGGER.info("Persisting the requested amount of data. This can take a while...");
@@ -51,13 +51,6 @@ public class MainClass {
     private static void createTasksData(int requestedOpenPositionsNumber) {
         LOGGER.info("Creating Tasks data...");
         TaskService.generateTaskData(requestedOpenPositionsNumber);
-        LOGGER.info("Done!");
-    }
-    private static int getRequestedUserInput(Console console) throws NumberFormatException{
-        String inputNumberStr = console.readLine("Enter the number of Tasks to generate [1-25]: ");
-        int inputNumber = Integer.parseInt(inputNumberStr);
-        validateInputLimit(inputNumber);
-        return inputNumber;
     }
 
     private static void validateInputLimit(int enteredNumber) throws IllegalArgumentException{

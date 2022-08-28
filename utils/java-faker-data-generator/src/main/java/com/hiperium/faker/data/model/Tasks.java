@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Andres Solorzano
  */
 @DynamoDbBean
-public class Task {
+public class Tasks {
 
     public static final String EXECUTION_COMMAND = "python3 /home/pi/faker/faker.py";
     private String id;
@@ -24,11 +24,11 @@ public class Task {
     private String description;
     private ZonedDateTime createdAt;
 
-    public Task() {
+    public Tasks() {
     }
 
-    public Task(String id, String name, Integer hour, Integer minute, Set<String> daysOfWeek,
-                ZonedDateTime executeUntil, String description) {
+    public Tasks(String id, String name, Integer hour, Integer minute, Set<String> daysOfWeek,
+                 ZonedDateTime executeUntil, String description) {
         this.id = id;
         this.name = name;
         this.hour = hour;
@@ -116,8 +116,8 @@ public class Task {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return id.equals(task.id);
+        Tasks tasks = (Tasks) o;
+        return id.equals(tasks.id);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "Tasks{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", hour=" + hour +

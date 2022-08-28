@@ -1,7 +1,7 @@
 package com.hiperium.faker.data.service;
 
 import com.hiperium.faker.data.generic.ServiceGeneric;
-import com.hiperium.faker.data.model.Task;
+import com.hiperium.faker.data.model.Tasks;
 import com.hiperium.faker.data.util.DataUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,9 +32,9 @@ public final class TaskService extends ServiceGeneric {
     private static void insertRequestedData(int iterator) throws DynamoDbException, IllegalArgumentException {
         Date executeUntil = DataUtil.FAKER.date()
                 .future(DataUtil.FAKER.random().nextInt(90, 180), TimeUnit.DAYS);
-        Task register = new Task(
+        Tasks register = new Tasks(
                 DataUtil.generateUUID(15),
-                "Faker data for Task " + iterator,
+                "Faker data for Tasks " + iterator,
                 DataUtil.FAKER.number().numberBetween(0, 23),
                 DataUtil.FAKER.number().numberBetween(0, 59),
                 DataUtil.getDaysOfWeek(DataUtil.FAKER.number().numberBetween(1, 8)),
@@ -48,14 +48,5 @@ public final class TaskService extends ServiceGeneric {
         register.setCreatedAt(DataUtil.getActualZonedDateTime());
         LOGGER.info("Inserting TASK: {}", register);
         taskTable.putItem(register);
-        LOGGER.debug("DONE!");
-    }
-
-    public static void deleteAllItems() {
-        LOGGER.debug("deleteAllItems() - START");
-        for (Task task : taskTable.scan().items()) {
-            taskTable.deleteItem(task);
-        }
-        LOGGER.debug("deleteAllItems() - END");
     }
 }
