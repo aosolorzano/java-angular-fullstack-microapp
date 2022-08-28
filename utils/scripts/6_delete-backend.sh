@@ -36,6 +36,10 @@ copilot app delete        \
     --yes
 
 echo ""
+echo "DELETING AMPLIFY APP FROM AWS.."
+amplify delete
+
+echo ""
 echo "PRUNING DOCKER SYSTEM LOCALLY..."
 docker container prune -f
 docker volume prune -f
