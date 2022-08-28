@@ -23,9 +23,9 @@ function createApiGateway() {
   echo "DONE!"
 }
 
-function buildIonicApp() {
+function updateIonicApp() {
   echo ""
-  sh ./4_build-ionic-for-production.sh
+  sh ./4_update-ionic-app.sh
   echo "DONE!"
 }
 
@@ -49,22 +49,19 @@ function deleteFrontend() {
 
 function createAll() {
   echo ""
-  createFrontend
-  createBackend
-  createApiGateway
-  buildIonicApp
-  createFakerData
+  sh ./8_create-all.sh
   echo "DONE!"
 }
 
 function deleteAll() {
-  deleteBackend
-  deleteFrontend
+  echo ""
+  sh ./9_delete-all.sh
   echo "DONE!"
 }
 
 # Main Menu
 menu() {
+  clear
   echo "
   ***********************************
   ************ Main Menu ************
@@ -72,12 +69,12 @@ menu() {
   1) Create Frontend.
   2) Create Backend.
   3) Create API Gateway.
-  4) Build App for Production.
+  4) Update Ionic/Angular API Client.
   5) Create DynamoDB Faker Data.
   6) Delete Backend.
   7) Delete Frontend.
-  c) CREATE ALL.
-  d) DELETE ALL.
+  c) CREATE all.
+  d) DELETE all.
   q) Quit/Exit.
   "
   read -r -p 'Choose an option: ' option
@@ -95,7 +92,7 @@ menu() {
     menu
     ;;
   4)
-    buildIonicApp
+    updateIonicApp
     menu
     ;;
   5)

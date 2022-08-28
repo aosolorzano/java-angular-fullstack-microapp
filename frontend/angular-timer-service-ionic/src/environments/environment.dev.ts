@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   timeZone: 'America/Guayaquil',
-  apiUrl: 'https://akx8uc0rr1.execute-api.us-east-1.amazonaws.com'
+  apiUrl: 'https://cr4uc3sn4h.execute-api.us-east-1.amazonaws.com'
 };

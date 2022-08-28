@@ -6,45 +6,41 @@ cd ../aws/ || {
 }
 
 echo ""
-read -r -p 'Please, enter the AWS profile used to deploy the resources: [default]  ' aws_profile
+read -r -p 'Please, enter the <AWS profile> used to deploy the resources: [profile default]  ' aws_profile
 if [ -z "$aws_profile" ]
 then
   aws_profile='default'
   echo "Using default profile: $aws_profile"
-else
-  export AWS_PROFILE=$aws_profile
-  echo "Using profile: <$AWS_PROFILE>"
 fi
+export AWS_PROFILE=$aws_profile
 
-read -r -p 'Please, enter the AWS Region used to deploy the resources: [us-east-1] ' aws_region
+read -r -p 'Please, enter the <AWS Region> used to deploy the resources: [us-east-1] ' aws_region
 if [ -z "$aws_region" ]
 then
   aws_region='us-east-1'
   echo "Using default region: $aws_region"
-else
-  export AWS_REGION=$aws_region
-  echo "Using region: <$AWS_REGION>"
 fi
+export AWS_REGION=$aws_region
 
-echo ""
-read -r -p 'Please, enter the Cognito User Pool ID: ' user_pool_id
+read -r -p 'Please, enter the <Cognito User Pool ID>: ' user_pool_id
 if [ -z "$user_pool_id" ]
 then
   echo 'Not value entered.'
   exit 0;
-else
-  sed -i'.bak' -e "s/cognito_user_pool_id/$user_pool_id/g" copilot/tasks/manifest.yml
 fi
 
+# APPLYING THE INPUTS TO THE COPILOT MANIFEST FILE
+sed -i '' -e "s/aws_region/$aws_region/g; s/cognito_user_pool_id/$user_pool_id/g" copilot/tasks/manifest.yml
+
 echo ""
-echo "CREATE INITIAL IAM ROLES AND ECR ON AWS..."
+echo "COPILOT STACK INIT ON AWS..."
 copilot init                \
   --app timerservice        \
   --name tasks              \
   --type 'Backend Service'
 
 echo ""
-echo "CREATE THE COPILOT ENVIRONMENT ON AWS..."
+echo "COPILOT ENVIRONMENT INIT ON AWS..."
 copilot env init            \
   --app timerservice        \
   --name dev                \
@@ -53,13 +49,13 @@ copilot env init            \
   --default-config
 
 echo ""
-echo "CREATE THE COPILOT ENVIRONMENT ON AWS..."
+echo "COPILOT ENVIRONMENT DEPLOYMENT ON AWS..."
 copilot env deploy          \
   --app timerservice        \
   --name dev
 
 echo ""
-echo "CREATE THE COPILOT ENVIRONMENT ON AWS..."
+echo "COPILOT ECS DEPLOYMENT ON AWS..."
 copilot deploy          \
   --app timerservice    \
   --name tasks          \

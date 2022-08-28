@@ -5,5 +5,6 @@ cd ../../frontend/angular-timer-service-ionic/ || {
   exit 1
 }
 
+echo ""
 echo "DELETING AMPLIFY APP FROM AWS.."
 amplify delete

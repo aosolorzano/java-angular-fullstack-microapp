@@ -29,80 +29,6 @@ run-scripts.sh
 ```
 This script will show you an option's menu where you can select various steps to deploy the Timer Service on AWS.
 
-## BACKEND Deployment
-### Deploying Timer Service Locally using Docker Compose
-Build the Timer Service container image:
-```
-docker-compose -f utils/docker/docker-compose.yml build
-```
-Deploy the local cluster of containers using Docker Compose:
-```
-docker-compose -f utils/docker/docker-compose.yml up
-```
-
-### Deploying local changes
-If you want to deploy your local changes after the initial setup, you can use the following command:
-```
-docker-compose -f utils/docker/docker-compose.yml up --build
-```
-
-## Other Quarkus Important Commands
-### Running the application in dev mode
-You can run your application in dev mode that enables live coding using:
-```
-mvn clean compile quarkus:dev
-```
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-### Creating a native executable
-You can create a native executable using:
-```
-mvn package -Pnative
-```
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-```
-mvn package -Pnative -Dquarkus.native.container-build=true
-```
-You can then execute your native executable with:
-```
-./target/java-timer-service-quarkus-1.1.0-runner
-```
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
-
-### Other Copilot ECS Important Commands
-List all of your AWS Copilot applications.
-```
-copilot app ls
-```
-Show information about the environments and services in your application.
-```
-copilot app show
-```
-Show information about your environments.
-```
-copilot env ls
-```
-Show information about the service, including endpoints, capacity and related resources.
-```
-copilot svc show
-```
-List of all the services in an application.
-```
-copilot svc ls
-```
-Show logs of a deployed service.
-```
-copilot svc logs --follow
-```
-Show service status.
-```
-copilot svc status
-```
-To delete and clean up all resources.
-```
-copilot app delete
-```
-
 ## FRONTEND Deployment
 ### Deploying Timer Service Locally
 First, you must configure Amplify into the Ionic project:
@@ -217,6 +143,96 @@ For this component, we must install the "date-fns" and "date-fn-tz" dependency f
 ```
 npm install date-fns --save
 npm install date-fns-tz --save
+```
+
+## BACKEND Deployment
+### Running the Timer Service locally using Docker Compose
+Build the Timer Service container image:
+```
+docker-compose -f utils/docker/docker-compose.yml build
+```
+Deploy the local cluster of containers using Docker Compose:
+```
+docker-compose -f utils/docker/docker-compose.yml up
+```
+
+### Running Timer Service changes using Docker Compose
+If you want to deploy your local changes after the initial setup, you can use the following command:
+```
+docker-compose -f utils/docker/docker-compose.yml up --build
+```
+
+### Publishing Timer Service changes to AWS
+Navigate to 'utils/aws' folder and then execute the following command:
+```
+copilot deploy --app timerservice --env dev --name tasks
+```
+
+### Running Timer Service using Docker
+First you need to build the Timer Service container image:
+```
+docker build -f Dockerfile.multistage-arm64 -t aosolorzano/java-timer-service-quarkus:1.1.0-arm64 .
+```
+Then, you can run the Timer Service container in standalone mode:
+```
+docker run -p 8080:8080 -d aosolorzano/java-timer-service-quarkus:1.1.0-arm64 --env-file ../../utils/docker/dev.env
+```
+
+## Other Quarkus Important Commands
+### Running the application in dev mode
+You can run your application in dev mode that enables live coding using:
+```
+mvn clean compile quarkus:dev
+```
+> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+
+### Creating a native executable
+You can create a native executable using:
+```
+mvn package -Pnative
+```
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+```
+mvn package -Pnative -Dquarkus.native.container-build=true
+```
+You can then execute your native executable with:
+```
+./target/java-timer-service-quarkus-1.1.0-runner
+```
+If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+
+### Other Copilot ECS Important Commands
+List all of your AWS Copilot applications.
+```
+copilot app ls
+```
+Show information about the environments and services in your application.
+```
+copilot app show
+```
+Show information about your environments.
+```
+copilot env ls
+```
+Show information about the service, including endpoints, capacity and related resources.
+```
+copilot svc show
+```
+List of all the services in an application.
+```
+copilot svc ls
+```
+Show logs of a deployed service.
+```
+copilot svc logs --app timerservice --name tasks --env dev --since 1h --follow
+```
+Show service status.
+```
+copilot svc status
+```
+To delete and clean up all created resources.
+```
+copilot app delete --name timerservice --yes
 ```
 
 ## Related Guides

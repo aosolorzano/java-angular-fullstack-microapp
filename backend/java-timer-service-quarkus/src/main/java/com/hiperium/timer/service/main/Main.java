@@ -20,7 +20,6 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     private static final String SQL_CONNECTION = "jdbc:postgresql://{0}:{1}/{2}";
 
-
     public static void main(String[] args) {
         LOGGER.info("main() - START");
         setApplicationProperties();
@@ -45,7 +44,7 @@ public class Main {
     private static void setApplicationProperties() {
         String dynamoTable = System.getenv("TASKS_DYNAMODB_TABLE_NAME");
         if (Objects.isNull(dynamoTable) || dynamoTable.isBlank()) {
-            LOGGER.info("TASKS_DYNAMODB_TABLE_NAME environment variable not found.");
+            LOGGER.warn("TASKS_DYNAMODB_TABLE_NAME environment variable not found.");
             LOGGER.info("Loading application property values for DynamoDB table name.");
         } else {
             LOGGER.debug("DYNAMODB TASK TABLE NAME: " + dynamoTable);
@@ -53,10 +52,10 @@ public class Main {
         }
         String timeZoneId = System.getenv("TASKS_TIME_ZONE_ID");
         if (Objects.isNull(timeZoneId) || timeZoneId.isBlank()) {
-            LOGGER.info("TASKS_TIME_ZONE_ID environment variable not found.");
+            LOGGER.warn("TASKS_TIME_ZONE_ID environment variable not found.");
             LOGGER.info("Loading application property values for TimeZone ID.");
         } else {
-            LOGGER.debug("TASKS TIME ZONE ID: " + dynamoTable);
+            LOGGER.debug("TASKS TIME ZONE ID: " + timeZoneId);
             System.setProperty("tasks.time.zone.id", timeZoneId);
         }
     }
@@ -64,7 +63,7 @@ public class Main {
     private static void setDataBaseProperties() {
         String auroraSecret = System.getenv("TIMER_SERVICE_DB_CLUSTER_SECRET");
         if (Objects.isNull(auroraSecret) || auroraSecret.isBlank()) {
-            LOGGER.info("TIMER_SERVICE_DB_CLUSTER_SECRET environment variable not found.");
+            LOGGER.warn("TIMER_SERVICE_DB_CLUSTER_SECRET environment variable not found.");
             LOGGER.info("Loading application property values for DB connection.");
             return;
         }
