@@ -1,5 +1,5 @@
 # Timer Service: A Quartz microservice that run Cron Jobs on AWS Fargate ECS.
-- **Author**: Andres Solorzano.
+- **Author**: [Andres Solorzano](https://www.linkedin.com/in/aosolorzano/).
 - **Level**: Advanced.
 - **Technologies**: Ionic, Angular, Java, GraalVM, Quarkus, Quartz, PostgreSQL, Docker, AWS SDK, Amplify, DynamoDB, API Gateway, Copilot and CloudFormation.
 
@@ -11,6 +11,9 @@ The following image shows the overall architecture of the application on AWS.
 ![](utils/images/aws-solution-architecture-v2.png)
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
+
+### Tutorial details on Medium.com
+You can follow a detailed tutorial with the last changes of the Timer Service application on my [Medium blog](https://aosolorzano.medium.com/jwt-verification-against-amazon-cognito-using-java-quarkus-55f3d22456ae).
 
 ## Requirements
 1. An AWS account.
