@@ -1,10 +1,10 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu [disabled]="!loggedIn" contentId="main-content" type="overlay">
-      <ion-content *ngIf="loggedIn">
+    <ion-menu *ngIf="userLoggedIn$ | async" contentId="main-content" type="overlay">
+      <ion-content>
         <ion-list id="inbox-list">
           <ion-list-header>Welcome</ion-list-header>
-          <ion-note>{{ username }}</ion-note>
+          <ion-note>{{ username$ | async }}</ion-note>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item routerDirection="root" [routerLink]="[p.url]" routerLinkActive="selected" lines="none" detail="false">
               <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>

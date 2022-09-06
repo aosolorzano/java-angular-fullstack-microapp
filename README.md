@@ -32,7 +32,7 @@ run-scripts.sh
 ```
 This script will show you an option's menu where you can select various steps to deploy the Timer Service on AWS.
 
-## FRONTEND Deployment
+## FRONTEND
 ### Deploying Timer Service Locally
 First, you must configure Amplify into the Ionic project:
 ```
@@ -84,7 +84,17 @@ ng update @angular/cli @angular/core --allow-dirty --force
 ```
 And those Angular dependencies will be updated.
 
-## Other Ionic Important Commands and Configuration
+## Angular Reactive (NgRx) dependencies
+For NgRx, we need to install the following dependencies:
+```
+ng add @ngrx/store
+ng add @ngrx/effects
+ng add @ngrx/entity
+ng add @ngrx/router-store
+```
+These commands update the "app.module.ts" file with the required imports and initial configurations. See the blog article fo more details.
+
+## Ionic Commands and Configurations
 To create a new ionic project using a blank template;
 ```
 ionic start <project-name> blank --type=angular
@@ -110,27 +120,6 @@ To create a new angular **service** without the test file, you can execute the f
 ionic g service shared/services/storage --skipTests
 ```
 
-### Ionic Storage
-You need to install the storage component:
-```
-npm install @ionic/storage-angular
-```
-Then, edit your NgModule declaration in src/app/app.module.ts or in the module for the component you'll use the storage library in, and add IonicStorageModule as an import:
-```
-import { Drivers } from '@ionic/storage';
-import { IonicStorageModule } from '@ionic/storage-angular';
-
-@NgModule({
-  imports: [
-    IonicStorageModule.forRoot({
-     name: 'TimerServiceDB',
-     driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage]
-    }),
-  ]
-})
-export class AppModule { }
-```
-
 ### Animate CSS
 [Animate.css](https://animate.style/) is a library of ready-to-use, cross-browser animations for use in your web projects.
 ```
@@ -148,7 +137,7 @@ npm install date-fns --save
 npm install date-fns-tz --save
 ```
 
-## BACKEND Deployment
+## BACKEND
 ### Running the Timer Service locally using Docker Compose
 Build the Timer Service container image:
 ```

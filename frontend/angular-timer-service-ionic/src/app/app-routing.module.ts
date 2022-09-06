@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
-import {AuthenticationGuardService} from "./auth/services/authentication/authentication-guard.service";
+import {AuthGuardService} from "./auth/services/auth-guard.service";
 
 const routes: Routes = [
   {
@@ -14,12 +14,12 @@ const routes: Routes = [
   },
   {
     path: 'app/tasks',
-    canActivate: [AuthenticationGuardService],
+    canActivate: [AuthGuardService],
     loadChildren: () => import('./tasks/tasks.module').then(m => m.TasksModule)
   },
   {
     path: 'app/error',
-    canActivate: [AuthenticationGuardService],
+    canActivate: [AuthGuardService],
     loadChildren: () => import('./shared/shared.module').then(m => m.SharedModule)
   },
   {

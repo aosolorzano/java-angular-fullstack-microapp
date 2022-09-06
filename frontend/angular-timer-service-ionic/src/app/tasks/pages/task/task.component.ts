@@ -6,7 +6,7 @@ import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ToastController} from "@ionic/angular";
 import {TasksService} from "../../services/tasks.service";
-import {AppRoutesEnum} from "../../../shared/utils/enums/app.routes.enum";
+import {AppRoutesEnum} from "../../../shared/utils/routes/app.routes.enum";
 import {ZonedDateUtils} from "../../../shared/utils/dates/zoned.date.utils";
 import {CrudButtonsState} from "../../../shared/utils/security/crud.buttons.state";
 

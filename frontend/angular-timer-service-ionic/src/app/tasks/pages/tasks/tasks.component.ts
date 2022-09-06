@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {Task} from "../../interfaces/task";
-import {Logger} from "aws-amplify";
-import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
-import {Router} from "@angular/router";
-import {AlertController, PopoverController, ToastController} from "@ionic/angular";
-import {TasksService} from "../../services/tasks.service";
-import {SearchComponent} from "../../components/search/search.component";
-import {AppRoutesEnum} from "../../../shared/utils/enums/app.routes.enum";
+import {Task} from '../../interfaces/task';
+import {Logger} from 'aws-amplify';
+import {LOG_TYPE} from '@aws-amplify/core/lib-esm/Logger';
+import {Router} from '@angular/router';
+import {AlertController, PopoverController, ToastController} from '@ionic/angular';
+import {TasksService} from '../../services/tasks.service';
+import {SearchComponent} from '../../components/search/search.component';
+import {AppRoutesEnum} from '../../../shared/utils/routes/app.routes.enum';
 
 @Component({
   selector: 'app-tasks',
@@ -15,8 +15,8 @@ import {AppRoutesEnum} from "../../../shared/utils/enums/app.routes.enum";
 })
 export class TasksComponent implements OnInit {
 
-  public searchField: string = 'name';
-  public searchInputMode: string = 'text';
+  public searchField = 'name';
+  public searchInputMode = 'text';
   public searchText: string;
   public tasks: Task[] = null;
   private logger = new Logger('TasksComponent', LOG_TYPE.DEBUG);
@@ -40,7 +40,7 @@ export class TasksComponent implements OnInit {
       component: SearchComponent,
       animated: true,
       mode: 'md',
-      event: event,
+      event,
       translucent: true,
       backdropDismiss: true
     });
