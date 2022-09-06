@@ -1,5 +1,5 @@
 
-export class CrudButtonsState {
+export class ButtonsState {
 
   private creatingState: boolean = false;
   private updatingState: boolean = false;

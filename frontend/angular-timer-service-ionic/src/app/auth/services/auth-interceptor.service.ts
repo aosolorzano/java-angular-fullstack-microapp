@@ -4,8 +4,8 @@ import {exhaustMap, Observable} from "rxjs";
 import {Store} from "@ngrx/store";
 import {Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
-import {AuthState} from "../reactive/reducers";
 import {getSessionToken} from "../reactive/auth.selectors";
+import {AppState} from "../../reducers";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   private logger = new Logger('AuthInterceptorService', LOG_TYPE.DEBUG);
 
-  constructor(private store: Store<AuthState>) {
+  constructor(private store: Store<AppState>) {
   }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

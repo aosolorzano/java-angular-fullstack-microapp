@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Hub, Auth, Logger} from "aws-amplify";
+import {Auth, Hub, Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
-import {AppRoutesEnum} from "../../../shared/utils/routes/app.routes.enum";
 import {User} from "../../interfaces/user";
+import {TasksPagesEnum} from "../../../tasks/utils/routes/tasks-pages.enum";
 
 @Component({
   selector: 'app-login',
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
           token: cognitoSession.getIdToken().getJwtToken()
         };
         await this.authService.userSignedIn(user);
-        await this.router.navigateByUrl(AppRoutesEnum.homePage);
+        await this.router.navigateByUrl(TasksPagesEnum.homePage);
         break;
       case 'signIn_failure':
         this.logger.debug('listener() - User sign in failed');

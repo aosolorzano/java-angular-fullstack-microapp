@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
 import {Logger} from 'aws-amplify';
 import {LOG_TYPE} from '@aws-amplify/core/lib-esm/Logger';
 import {AuthService} from './auth/services/auth.service';
-import {AppRoutesEnum} from './shared/utils/routes/app.routes.enum';
-import {StorageKeysEnum} from "./shared/utils/security/storage.keys.enum";
+import {AuthStoreKeyEnum} from "./auth/utils/security/store-keys.enum";
+import {AuthPagesEnum} from "./auth/utils/routes/auth-pages.enum";
+import {TasksPagesEnum} from "./tasks/utils/routes/tasks-pages.enum";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +15,7 @@ import {StorageKeysEnum} from "./shared/utils/security/storage.keys.enum";
 })
 export class AppComponent implements OnInit {
   public appPages = [
-    {title: 'Tasks', url: '/app/tasks/main', icon: 'calendar-number'}
+    {title: 'Tasks', url: TasksPagesEnum.homePage, icon: 'calendar-number'}
   ];
   public username$: Observable<string>;
   public userLoggedIn$: Observable<boolean>;
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
   public async ngOnInit() {
     this.logger.debug('ngOnInit - START');
-    const userData = localStorage.getItem(StorageKeysEnum.userDataKeyLabel);
+    const userData = localStorage.getItem(AuthStoreKeyEnum.userDataKeyName);
     if (userData) {
       const user = JSON.parse(userData);
       await this.authService.userSignedIn(user);
@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
     this.userLoggedIn$ = this.authService.isUserLoggedIn();
     this.username$ = this.authService.getUserFullName();
     if (userData) {
-      await this.router.navigateByUrl(AppRoutesEnum.homePage);
+      await this.router.navigateByUrl(TasksPagesEnum.homePage);
     }
     this.logger.debug('ngOnInit - END');
   }
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   public async signOut() {
     this.logger.debug('signOut() - START');
     await this.authService.userSignedOut();
-    await this.router.navigateByUrl(AppRoutesEnum.loginPage);
+    await this.router.navigateByUrl(AuthPagesEnum.loginPage);
     this.logger.debug('signOut() - END');
   }
 }

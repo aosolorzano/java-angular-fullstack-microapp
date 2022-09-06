@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {AlertController, PopoverController, ToastController} from '@ionic/angular';
 import {TasksService} from '../../services/tasks.service';
 import {SearchComponent} from '../../components/search/search.component';
-import {AppRoutesEnum} from '../../../shared/utils/routes/app.routes.enum';
+import {TasksPagesEnum} from "../../utils/routes/tasks-pages.enum";
 
 @Component({
   selector: 'app-tasks',
@@ -62,15 +62,15 @@ export class TasksComponent implements OnInit {
   }
 
   public async create() {
-    await this.router.navigateByUrl(AppRoutesEnum.createTaskPage);
+    await this.router.navigateByUrl(TasksPagesEnum.createTaskPage);
   }
 
   public async update(task: Task) {
-    await this.router.navigate([AppRoutesEnum.updateTaskPage, task.id]);
+    await this.router.navigate([TasksPagesEnum.updateTaskPage, task.id]);
   }
 
   public async details(task: Task) {
-    await this.router.navigate([AppRoutesEnum.detailsTaskPage, task.id]);
+    await this.router.navigate([TasksPagesEnum.detailsTaskPage, task.id]);
   }
 
   public async presentDeleteTaskAlert(task: Task) {

@@ -13,6 +13,7 @@ import {LoginComponent} from "./pages/login/login.component";
 
 import {AuthEffects} from "./reactive/auth.effects";
 import {authReducer} from "./reactive/reducers";
+import {AuthStoreKeyEnum} from "./utils/security/store-keys.enum";
 
 @NgModule({
   imports: [
@@ -20,7 +21,7 @@ import {authReducer} from "./reactive/reducers";
     AuthRoutingModule,
     IonicModule,
     AmplifyAuthenticatorModule,
-    StoreModule.forFeature('auth', authReducer),
+    StoreModule.forFeature(AuthStoreKeyEnum.authFeatureName, authReducer),
     EffectsModule.forFeature([AuthEffects])
   ],
   declarations: [

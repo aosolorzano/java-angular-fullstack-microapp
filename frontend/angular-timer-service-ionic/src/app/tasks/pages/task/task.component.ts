@@ -6,22 +6,22 @@ import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ToastController} from "@ionic/angular";
 import {TasksService} from "../../services/tasks.service";
-import {AppRoutesEnum} from "../../../shared/utils/routes/app.routes.enum";
-import {ZonedDateUtils} from "../../../shared/utils/dates/zoned.date.utils";
-import {CrudButtonsState} from "../../../shared/utils/security/crud.buttons.state";
+import {ZonedDate} from "../../utils/dates/zoned.date";
+import {ButtonsState} from "../../utils/common/buttons.state";
+import {TasksPagesEnum} from "../../utils/routes/tasks-pages.enum";
 
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
   styleUrls: ['./task.component.scss'],
 })
-export class TaskComponent extends CrudButtonsState implements OnInit {
+export class TaskComponent extends ButtonsState implements OnInit {
 
   public taskForm: FormGroup = this.formBuilder.group({
-    name:          [null, [Validators.required,                Validators.minLength(5), Validators.maxLength(25)]],
+    name:          [null, [Validators.required,                 Validators.minLength(5), Validators.maxLength(25)]],
     description:   [null, [Validators.minLength(10), Validators.maxLength(150)]],
-    hour:          [null, [Validators.required,                Validators.min(0), Validators.max(23)]],
-    minute:        [null, [Validators.required,                Validators.min(0), Validators.max(59)]],
+    hour:          [null, [Validators.required,                 Validators.min(0), Validators.max(23)]],
+    minute:        [null, [Validators.required,                 Validators.min(0), Validators.max(59)]],
     executionTime: [null, Validators.required],
     daysOfWeek:    [null, Validators.required],
     executeUntil:  [null, Validators.required]
@@ -62,7 +62,7 @@ export class TaskComponent extends CrudButtonsState implements OnInit {
           }
         });
       } else {
-        await this.router.navigate([AppRoutesEnum.homePage]);
+        await this.router.navigate([TasksPagesEnum.homePage]);
         await this.presentToast('Task not found.');
       }
     }
@@ -71,13 +71,13 @@ export class TaskComponent extends CrudButtonsState implements OnInit {
 
   public formatExecuteUntilDate(value: string): string {
     this.taskForm.patchValue({
-      executeUntil: ZonedDateUtils.getParsedZonedDate(value)
+      executeUntil: ZonedDate.getParsedZonedDate(value)
     });
-    return ZonedDateUtils.getParsedZonedDate(value, 'dd MMM yyyy');
+    return ZonedDate.getParsedZonedDate(value, 'dd MMM yyyy');
   }
 
   public formatExecutionTime(value: string): string {
-    const formattedTime: string = ZonedDateUtils.getParsedZonedDate(value, 'HH:mm');
+    const formattedTime: string = ZonedDate.getParsedZonedDate(value, 'HH:mm');
     const taskTimeValues: string[] = formattedTime.split(':');
     this.taskForm.patchValue({
       hour: taskTimeValues[0]
@@ -110,7 +110,7 @@ export class TaskComponent extends CrudButtonsState implements OnInit {
     if (super.isCreatingState()) {
       const task: Task = this.getNewTaskFromForm();
       this.taskService.create(task).subscribe(async createdTask => {
-        await this.router.navigate([AppRoutesEnum.updateTaskPage, createdTask.id]);
+        await this.router.navigate([TasksPagesEnum.updateTaskPage, createdTask.id]);
         await this.presentToast('Task created successfully.');
       });
     } else if (super.isUpdatingState()) {
@@ -124,7 +124,7 @@ export class TaskComponent extends CrudButtonsState implements OnInit {
 
   private initTaskDates() {
     const executionTime: Date = new Date(1985, 4, 8, this.task.hour, this.task.minute, 0, 0);
-    this.executionTimeValue = this.formatExecutionTime(ZonedDateUtils.getStringZonedDate(executionTime));
+    this.executionTimeValue = this.formatExecutionTime(ZonedDate.getStringZonedDate(executionTime));
     this.executeUntilValue = this.formatExecuteUntilDate(this.task.executeUntil);
   }
 
@@ -133,7 +133,7 @@ export class TaskComponent extends CrudButtonsState implements OnInit {
     delete formValues.executionTime;
     const task: Task = formValues;
     task.executionCommand = "python3 /home/pi/faker/faker.py";
-    task.executeUntil = ZonedDateUtils.getStringZonedDate(ZonedDateUtils
+    task.executeUntil = ZonedDate.getStringZonedDate(ZonedDate
       .setTimeToMidnight(new Date(task.executeUntil)));
     return task;
   }
@@ -144,7 +144,7 @@ export class TaskComponent extends CrudButtonsState implements OnInit {
     const task: Task = formValues;
     task.id = this.task.id;
     task.executionCommand = this.task.executionCommand;
-    task.executeUntil = ZonedDateUtils.getStringZonedDate(ZonedDateUtils
+    task.executeUntil = ZonedDate.getStringZonedDate(ZonedDate
       .setTimeToMidnight(new Date(task.executeUntil)));
     task.createdAt = this.task.createdAt;
     return task;

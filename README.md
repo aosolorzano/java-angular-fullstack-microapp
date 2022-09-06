@@ -88,9 +88,10 @@ And those Angular dependencies will be updated.
 For NgRx, we need to install the following dependencies:
 ```
 ng add @ngrx/store
+ng add @ngrx/store-devtools
 ng add @ngrx/effects
-ng add @ngrx/entity
 ng add @ngrx/router-store
+ng add @ngrx/entity
 ```
 These commands update the "app.module.ts" file with the required imports and initial configurations. See the blog article fo more details.
 

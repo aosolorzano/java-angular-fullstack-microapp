@@ -10,15 +10,18 @@ import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {AuthModule} from "./auth/auth.module";
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {RouterState, StoreRouterConnectingModule} from '@ngrx/router-store';
 import {environment} from '../environments/environment';
+import {metaReducers, reducers} from "./reducers";
 
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     IonicModule.forRoot(),
-    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot(reducers, {metaReducers}),
     EffectsModule.forRoot([]),
+    StoreRouterConnectingModule.forRoot({stateKey: 'router', routerState: RouterState.Minimal}),
     AuthModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,

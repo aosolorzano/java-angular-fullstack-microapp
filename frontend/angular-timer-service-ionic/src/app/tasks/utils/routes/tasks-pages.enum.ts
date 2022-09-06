@@ -1,5 +1,4 @@
-export enum AppRoutesEnum {
-  loginPage       = '/app/auth/login',
+export enum TasksPagesEnum {
   homePage        = '/app/tasks',
   createTaskPage  = '/app/tasks/create',
   detailsTaskPage = '/app/tasks/details',

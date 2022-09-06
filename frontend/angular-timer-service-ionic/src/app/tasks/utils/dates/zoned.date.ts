@@ -5,7 +5,7 @@ import {format, utcToZonedTime} from "date-fns-tz";
 import {parseISO} from "date-fns";
 import {environment} from "../../../../environments/environment";
 
-export class ZonedDateUtils {
+export class ZonedDate {
 
   public static getStringZonedDate(date: Date): string {
     const zonedExecutionTime = utcToZonedTime(date, environment.timeZone);
