@@ -1,12 +1,15 @@
 import {Component, OnInit} from '@angular/core';
-import {Task} from '../../interfaces/task';
 import {Logger} from 'aws-amplify';
 import {LOG_TYPE} from '@aws-amplify/core/lib-esm/Logger';
 import {Router} from '@angular/router';
+import {Observable} from "rxjs";
+import {select, Store} from "@ngrx/store";
 import {AlertController, PopoverController, ToastController} from '@ionic/angular';
-import {TasksService} from '../../services/tasks.service';
+import {Task} from '../../model/task';
 import {SearchComponent} from '../../components/search/search.component';
 import {TasksPagesEnum} from "../../utils/routes/tasks-pages.enum";
+import {AppState} from "../../../shared/reactive/reducers";
+import {selectAllEntityTasks} from "../../reactive/tasks.selectors";
 
 @Component({
   selector: 'app-tasks',
@@ -18,20 +21,18 @@ export class TasksComponent implements OnInit {
   public searchField = 'name';
   public searchInputMode = 'text';
   public searchText: string;
-  public tasks: Task[] = null;
+  public tasks$: Observable<Task[]>;
   private logger = new Logger('TasksComponent', LOG_TYPE.DEBUG);
 
   constructor(private router: Router, private alertController: AlertController,
-              public toastController: ToastController,
-              public popoverController: PopoverController,
-              private taskService: TasksService) {
+              private toastController: ToastController,
+              private popoverController: PopoverController,
+              private store: Store<AppState>) {
   }
 
   public ngOnInit() {
     this.logger.debug('ngOnInit() - START');
-    this.taskService.getTasks().subscribe(tasks => {
-      this.tasks = tasks;
-    });
+    this.tasks$ = this.store.pipe(select(selectAllEntityTasks));
     this.logger.debug('ngOnInit() - END');
   }
 
@@ -98,9 +99,9 @@ export class TasksComponent implements OnInit {
 
   private async delete(task: Task) {
     this.logger.debug('delete() - START: ' + task.id);
-    this.taskService.delete(task.id).subscribe(() => {
-      this.tasks = this.tasks.filter(actualTask => actualTask.id !== task.id);
-    });
+    // this.taskService.delete(task.id).subscribe(() => {
+    //   this.tasks = this.tasks.filter(actualTask => actualTask.id !== task.id);
+    // });
     await this.presentToast();
     this.logger.debug('delete() - END');
   }

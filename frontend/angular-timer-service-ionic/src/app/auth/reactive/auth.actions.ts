@@ -1,11 +1,11 @@
 import {createAction, props} from '@ngrx/store';
-import {User} from "../interfaces/user";
+import {User} from "../model/user";
 
-export const login = createAction(
+export const loginAction = createAction(
   "[AuthService] USER_SIGNED_IN",
   props<{ user: User }>()
 );
 
-export const logout = createAction(
+export const logoutAction = createAction(
   "[SideMenu] USER_SIGNED_OUT"
 );

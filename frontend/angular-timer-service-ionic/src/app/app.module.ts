@@ -12,16 +12,26 @@ import {AuthModule} from "./auth/auth.module";
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {RouterState, StoreRouterConnectingModule} from '@ngrx/router-store';
 import {environment} from '../environments/environment';
-import {metaReducers, reducers} from "./reducers";
+import {metaReducers, reducers} from "./shared/reactive/reducers";
 
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     IonicModule.forRoot(),
-    StoreModule.forRoot(reducers, {metaReducers}),
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability:     true,
+        strictActionImmutability:    true,
+        strictActionSerializability: true,
+        strictStateSerializability:  true
+    }}),
+    StoreRouterConnectingModule.forRoot({
+      stateKey: 'router',
+      routerState: RouterState.Minimal
+    }),
     EffectsModule.forRoot([]),
-    StoreRouterConnectingModule.forRoot({stateKey: 'router', routerState: RouterState.Minimal}),
     AuthModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,

@@ -1,5 +1,5 @@
 import {createReducer, on} from '@ngrx/store';
-import {User} from "../../interfaces/user";
+import {User} from "../../model/user";
 import {AuthActions} from "../action.types";
 
 export interface AuthState {
@@ -12,12 +12,12 @@ export const initialAuthState: AuthState = {
 
 export const authReducer = createReducer(
   initialAuthState,
-  on(AuthActions.login, (state, action) => {
+  on(AuthActions.loginAction, (authState, action) => {
     return {
       user: action.user
     };
   }),
-  on(AuthActions.logout, (state, action) => {
+  on(AuthActions.logoutAction, (authState, action) => {
     return {
       user: undefined
     };

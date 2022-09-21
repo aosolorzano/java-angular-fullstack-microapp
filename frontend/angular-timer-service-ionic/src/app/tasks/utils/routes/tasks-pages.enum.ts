@@ -1,6 +1,6 @@
 export enum TasksPagesEnum {
-  homePage        = '/app/tasks',
-  createTaskPage  = '/app/tasks/create',
-  detailsTaskPage = '/app/tasks/details',
-  updateTaskPage  = '/app/tasks/update'
+  homePage        = '/tasks',
+  createTaskPage  = '/tasks/create',
+  detailsTaskPage = '/tasks/details',
+  updateTaskPage  = '/tasks/update'
 }

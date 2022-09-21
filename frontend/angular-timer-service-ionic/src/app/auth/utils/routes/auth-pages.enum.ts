@@ -1,3 +1,3 @@
 export enum AuthPagesEnum {
-  loginPage = '/app/login'
+  loginPage = '/login'
 }

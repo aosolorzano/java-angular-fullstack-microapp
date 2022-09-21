@@ -2,11 +2,9 @@ import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Task} from '../interfaces/task';
+import {Task} from '../model/task';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class TasksService {
 
   private apiUrl: string = environment.apiUrl;
@@ -25,7 +23,7 @@ export class TasksService {
     return this.httpClient.delete<any>(`${this.apiUrl}/tasks/${id}`);
   }
 
-  public getTasks(): Observable<Task[]> {
+  public findAll(): Observable<Task[]> {
     return this.httpClient.get<Task[]>(`${this.apiUrl}/tasks`);
   }
 

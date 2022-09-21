@@ -1,17 +1,23 @@
 import {NgModule} from '@angular/core';
-import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {AuthGuardService} from "./auth/services/auth-guard.service";
 import {SharedRoutesEnum} from "./shared/utils/routes/shared-routes.enum";
 import {TasksRoutesEnum} from "./tasks/utils/routes/tasks-routes.enum";
+import {LoginComponent} from "./auth/pages/login/login.component";
+import {AuthRoutesEnum} from "./auth/utils/routes/auth-routes.enum";
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: TasksRoutesEnum.homeRoute,
+    redirectTo: AuthRoutesEnum.loginRoute,
     pathMatch: 'full'
   },
   {
-    path: TasksRoutesEnum.homeRoute,
+    path: AuthRoutesEnum.loginRoute,
+    component: LoginComponent
+  },
+  {
+    path: TasksRoutesEnum.tasksRoute,
     canActivate: [AuthGuardService],
     loadChildren: () => import('./tasks/tasks.module').then(m => m.TasksModule)
   },
@@ -28,7 +34,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, {})
   ],
   exports: [RouterModule]
 })

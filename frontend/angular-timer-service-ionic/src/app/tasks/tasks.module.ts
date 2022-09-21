@@ -11,8 +11,24 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {SearchComponent} from "./components/search/search.component";
 import {TaskComponent} from "./pages/task/task.component";
 import {TasksComponent} from "./pages/tasks/tasks.component";
+import {TasksService} from "./services/tasks.service";
+import {TasksResolver} from "./reactive/tasks.resolver";
+import {EffectsModule} from "@ngrx/effects";
+import {TasksEffects} from "./reactive/tasks.effects";
+import {StoreModule} from "@ngrx/store";
+import {tasksReducer} from "./reactive/reducers/tasks.reducers";
+import {TasksStoreKeyEnum} from "./utils/common/store-keys.enum";
 
 @NgModule({
+  imports: [
+    CommonModule,
+    TasksRoutingModule,
+    IonicModule,
+    ReactiveFormsModule,
+    SharedModule,
+    StoreModule.forFeature(TasksStoreKeyEnum.tasksFeatureName, tasksReducer),
+    EffectsModule.forFeature([TasksEffects])
+  ],
   declarations: [
     DaysPipe,
     SearchPipe,
@@ -20,14 +36,11 @@ import {TasksComponent} from "./pages/tasks/tasks.component";
     MinutePipe,
     SearchComponent,
     TasksComponent,
-    TaskComponent,
+    TaskComponent
   ],
-  imports: [
-    CommonModule,
-    TasksRoutingModule,
-    IonicModule,
-    ReactiveFormsModule,
-    SharedModule
+  providers: [
+    TasksResolver,
+    TasksService
   ]
 })
 export class TasksModule {

@@ -1,4 +1,4 @@
 export enum SharedRoutesEnum {
-  errorRoute = 'app/error',
-  notFoundRoute = 'app/error/404'
+  errorRoute = 'error',
+  notFoundRoute = 'error/404'
 }

@@ -3,11 +3,11 @@ import {Auth, Hub, Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
-import {User} from "../../interfaces/user";
+import {User} from "../../model/user";
 import {TasksPagesEnum} from "../../../tasks/utils/routes/tasks-pages.enum";
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-loginAction',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -21,6 +21,15 @@ export class LoginComponent implements OnInit {
   public async ngOnInit() {
     this.logger.debug('ngOnInit() - START');
     Hub.listen('auth', this.listener);
+    try {
+      const cognitoSession = await Auth.currentSession();
+      if (cognitoSession) {
+        this.logger.debug('ngOnInit() - User is already logged in: ', cognitoSession);
+        await this.loginUser(cognitoSession);
+      }
+    } catch (error) {
+      this.logger.debug('ngOnInit() - User is not logged in...');
+    }
     this.logger.debug('ngOnInit() - END ');
   }
 
@@ -30,21 +39,31 @@ export class LoginComponent implements OnInit {
     switch (cognitoAuthEvent) {
       case 'signIn':
         const cognitoSession = await Auth.currentSession();
-        const cognitoUser = await Auth.currentUserInfo();
-        const user: User = {
-          id: cognitoUser.attributes.sub,
-          name: cognitoUser.attributes.name,
-          email: cognitoUser.attributes.email,
-          token: cognitoSession.getIdToken().getJwtToken()
-        };
-        await this.authService.userSignedIn(user);
-        await this.router.navigateByUrl(TasksPagesEnum.homePage);
+        await this.loginUser(cognitoSession);
         break;
       case 'signIn_failure':
-        this.logger.debug('listener() - User sign in failed');
+        this.logger.debug('listener() - User sign in failed...');
+        break;
+      case 'signOut':
+        this.logger.debug('listener() - User signed out...');
         break;
     }
     this.logger.debug('listener() - END');
   }
 
+  private async loginUser(cognitoSession) {
+    const cognitoUser = await Auth.currentUserInfo();
+    if (cognitoUser) {
+      const user: User = {
+        id: cognitoUser.attributes.sub,
+        name: cognitoUser.attributes.name,
+        email: cognitoUser.attributes.email,
+        token: cognitoSession.getIdToken().getJwtToken()
+      };
+      await this.authService.userLoggedIn(user);
+      await this.router.navigateByUrl(TasksPagesEnum.homePage);
+    } else {
+      this.logger.debug('loginUser() - User session not found...');
+    }
+  }
 }

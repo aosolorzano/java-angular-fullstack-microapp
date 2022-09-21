@@ -2,15 +2,14 @@ import {Injectable} from '@angular/core';
 import {Auth, Logger} from 'aws-amplify';
 import {LOG_TYPE} from '@aws-amplify/core/lib-esm/Logger';
 import {select, Store} from "@ngrx/store";
-import {User} from "../interfaces/user";
+import {User} from "../model/user";
 import {getUserFullName, isLoggedIn} from "../reactive/auth.selectors";
 import {Observable} from "rxjs";
-import {login, logout} from "../reactive/auth.actions";
-import {AppState} from "../../reducers";
+import {loginAction, logoutAction} from "../reactive/auth.actions";
+import {AppState} from "../../shared/reactive/reducers";
+import {removeTasksFromStoreAction} from "../../tasks/reactive/tasks.actions";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
 
   private logger = new Logger('AuthService', LOG_TYPE.DEBUG);
@@ -18,30 +17,29 @@ export class AuthService {
   constructor(private store: Store<AppState>) {
   }
 
-  public async userSignedIn(user: User): Promise<void> {
-    this.logger.debug('userSignedIn() - START: ', user);
-    this.store.dispatch(login({user}));
-    this.logger.debug('userSignedIn() - END');
+  public async userLoggedIn(user: User): Promise<void> {
+    this.logger.debug('userLoggedIn() - START');
+    this.store.dispatch(loginAction({user}));
+    this.logger.debug('userLoggedIn() - END');
   }
 
-  public async userSignedOut(): Promise<void> {
+  public async userLoggedOut(): Promise<void> {
     await Auth.signOut({global: true}).then(() => {
-      this.logger.debug('userSignedOut() - SUCCESS');
+      this.logger.debug('userLoggedOut() - SUCCESS');
+      this.store.dispatch(removeTasksFromStoreAction());
+      this.store.dispatch(logoutAction());
     });
-    this.store.dispatch(logout());
   }
 
   public isUserLoggedIn(): Observable<boolean> {
-    return this.store
-      .pipe(
-        select(isLoggedIn)
-      );
+    return this.store.pipe(
+      select(isLoggedIn)
+    );
   }
 
   public getUserFullName(): Observable<string> {
-    return this.store
-      .pipe(
-        select(getUserFullName)
-      );
+    return this.store.pipe(
+      select(getUserFullName)
+    );
   }
 }

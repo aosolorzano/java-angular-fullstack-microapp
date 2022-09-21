@@ -26,12 +26,12 @@
 
 <ion-content class="ion-padding" [fullscreen]="true">
   <ion-list lines="none">
-    <ion-item *ngIf="tasks != null && tasks.length === 0">
+    <ion-item *ngIf="(tasks$ | async).length === 0">
       <ion-label>
-        <h2>You don't have any created tasks yet.</h2>
+        <h2>You don't have any Tasks created yet.</h2>
       </ion-label>
     </ion-item>
-    <ion-item-sliding *ngFor="let task of tasks | search:searchText:searchField">
+    <ion-item-sliding *ngFor="let task of (tasks$ | async) | search:searchText:searchField">
       <ion-item-options side="start">
         <ion-item-option (click)="details(task)">
           <ion-icon slot="icon-only" name="reader-outline"></ion-icon>
@@ -58,7 +58,7 @@
     </ion-item-sliding>
   </ion-list>
 
-  <ion-list lines="none" *ngIf="tasks === null">
+  <ion-list lines="none" *ngIf="tasks$ === null">
     <ion-item *ngFor="let hero of [1,1,1,1,1,1,1,1,1,1]">
       <ion-label slot="start">
         <h3><ion-skeleton-text animated="true" style="width: 50%"></ion-skeleton-text></h3>

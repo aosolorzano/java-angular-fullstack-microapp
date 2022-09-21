@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Task} from "../../interfaces/task";
+import {Task} from "../../model/task";
 import {Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {ActivatedRoute, Router} from "@angular/router";

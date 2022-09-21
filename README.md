@@ -8,7 +8,7 @@ This project uses the Quarkus Framework to perform CRUD operations over Tasks re
 This Tasks also realises CRUD operations against Quartz Cron Jobs stored on AWS Aurora Postgres DB to maintain state among Jobs in a clustered environmend.
 
 The following image shows the overall architecture of the application on AWS.
-![](utils/images/aws-solution-architecture-v2.png)
+![](utils/docs/images/aws-solution-architecture-v2.png)
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
@@ -43,7 +43,7 @@ Then, you must configure the authentication provider with the following command:
 amplify add auth
 ```
 The following image shows you some configuration properties that I used to configure Cognito:
-![](utils/images/amplify-auth-cognito-options.png)
+![](utils/docs/images/amplify-auth-cognito-options.png)
 
 Then, install Amplify dependencies:
 ```
@@ -110,11 +110,11 @@ ionic g component shared/components/header --spec=false
 ```
 To create a new **page** component without the spec file:
 ```
-ionic g page shared/pages/login --spec=false
+ionic g page shared/pages/loginAction --spec=false
 ```
 If you want to only visualize the files that will be created, add the dry-run directive:
 ```
-ionic g page shared/pages/login --spec=false --dry-run
+ionic g page shared/pages/loginAction --spec=false --dry-run
 ```
 To create a new angular **service** without the test file, you can execute the following:
 ```

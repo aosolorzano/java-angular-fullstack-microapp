@@ -2,7 +2,6 @@ import {ModuleWithProviders, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IonicModule} from "@ionic/angular";
 import {AmplifyAuthenticatorModule} from "@aws-amplify/ui-angular";
-import {AuthRoutingModule} from './auth-routing.module';
 import {StoreModule} from "@ngrx/store";
 import {EffectsModule} from "@ngrx/effects";
 
@@ -12,13 +11,12 @@ import {AuthInterceptorService} from "./services/auth-interceptor.service";
 import {LoginComponent} from "./pages/login/login.component";
 
 import {AuthEffects} from "./reactive/auth.effects";
-import {authReducer} from "./reactive/reducers";
-import {AuthStoreKeyEnum} from "./utils/security/store-keys.enum";
+import {authReducer} from "./reactive/reducers/auth.reducers";
+import {AuthStoreKeyEnum} from "./utils/store/store-keys.enum";
 
 @NgModule({
   imports: [
     CommonModule,
-    AuthRoutingModule,
     IonicModule,
     AmplifyAuthenticatorModule,
     StoreModule.forFeature(AuthStoreKeyEnum.authFeatureName, authReducer),
