@@ -1,6 +1,6 @@
 package com.hiperium.timer.service.jobs;
 
-import com.hiperium.timer.service.model.services.TaskService;
+import com.hiperium.timer.service.services.TaskService;
 import com.hiperium.timer.service.utils.TaskJobUtil;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.quartz.Job;

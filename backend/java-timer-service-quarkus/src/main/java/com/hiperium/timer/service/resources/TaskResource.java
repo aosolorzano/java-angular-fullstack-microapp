@@ -1,7 +1,7 @@
 package com.hiperium.timer.service.resources;
 
 import com.hiperium.timer.service.model.Task;
-import com.hiperium.timer.service.model.services.TaskService;
+import com.hiperium.timer.service.services.TaskService;
 import com.hiperium.timer.service.utils.enums.TaskDaysEnum;
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -63,7 +63,6 @@ public class TaskResource {
 
     @DELETE
     @Path("{id}")
-    @Consumes(MediaType.TEXT_PLAIN)
     public Uni<Response> delete(@PathParam("id") String id) {
         LOGGER.debug("delete() - START: " + id);
         if (Objects.isNull(id) || id.isEmpty()) {
@@ -106,13 +105,12 @@ public class TaskResource {
     }
 
     @GET
-    @Path("/aboutMe")
+    @Path("/aboutMyUser")
     @NoCache
-    public User aboutMe() {
-        LOGGER.debug("aboutMe() - START");
-        LOGGER.debug("Principal name: " + identity.getPrincipal().getName());
-        identity.getRoles().forEach(role -> LOGGER.debug("Role: " + role));
-        return new User(identity);
+    public User aboutMyUser() {
+        LOGGER.debug("aboutMyUser() - START");
+        this.identity.getRoles().forEach(role -> LOGGER.debug("Role: " + role));
+        return new User(this.identity);
     }
 
     public static class User {

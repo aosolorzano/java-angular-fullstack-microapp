@@ -1,4 +1,4 @@
-package com.hiperium.timer.service.model.services;
+package com.hiperium.timer.service.services;
 
 import com.hiperium.timer.service.common.AbstractTaskService;
 import com.hiperium.timer.service.model.Task;
@@ -26,35 +26,43 @@ public class TaskService extends AbstractTaskService {
     JobService jobService;
 
     public Uni<Task> create(Task task) {
-        LOGGER.debug("create() - START");
+        LOGGER.debug("create() - START: " + task.getName());
         return Uni.createFrom()
-                .completionStage(() -> this.dynamoAsyncClient.putItem(
-                        super.getPutItemRequest(task)))
-                .flatMap(putItemResponse -> this.jobService.create(task));
+                .completionStage(() ->
+                        this.dynamoAsyncClient.putItem(
+                                super.getPutItemRequest(task)))
+                .flatMap(putItemResponse ->
+                        this.jobService.create(task));
     }
 
     public Uni<Task> update(Task actualTask, Task updatedTask) {
-        LOGGER.debug("update() - START");
+        LOGGER.debug("update() - START: " + actualTask.getName());
         return Uni.createFrom()
-                .completionStage(() -> this.dynamoAsyncClient.updateItem(
-                        super.getUpdateItemRequest(actualTask, updatedTask)))
-                .flatMap(updateItemResponse -> this.jobService.update(updatedTask));
+                .completionStage(() ->
+                        this.dynamoAsyncClient.updateItem(
+                                super.getUpdateItemRequest(actualTask, updatedTask)))
+                .flatMap(updateItemResponse ->
+                        this.jobService.update(updatedTask));
     }
 
     public Uni<Task> delete(Task task) {
-        LOGGER.debug("delete() - START");
+        LOGGER.debug("delete() - START: " + task.getName());
         return Uni.createFrom()
-                .completionStage(() -> this.dynamoAsyncClient.deleteItem(
-                        super.getDeleteItemRequest(task)))
-                .flatMap(deleteItemResponse -> this.jobService.delete(task));
+                .completionStage(() ->
+                        this.dynamoAsyncClient.deleteItem(
+                                super.getDeleteItemRequest(task)))
+                .flatMap(deleteItemResponse ->
+                        this.jobService.delete(task));
     }
 
     public Uni<Task> find(String id) {
         LOGGER.debug("find() - START");
         return Uni.createFrom()
-                .completionStage(() -> this.dynamoAsyncClient.getItem(
-                        super.getItemRequest(id)))
-                .map(itemResponse -> TaskDataUtil.getTaskFromAttributeValues(itemResponse.item()));
+                .completionStage(() ->
+                        this.dynamoAsyncClient.getItem(
+                                super.getItemRequest(id)))
+                .map(itemResponse ->
+                        TaskDataUtil.getTaskFromAttributeValues(itemResponse.item()));
     }
 
     public Uni<List<Task>> findAll() {
@@ -70,9 +78,8 @@ public class TaskService extends AbstractTaskService {
 
     public void executeTask(String taskId) {
         LOGGER.info("executeTask() - START: " + taskId);
-        this.find(taskId)
-                .subscribe().with(
-                    taskResult -> LOGGER.info("Command to execute: " + taskResult.getExecutionCommand()),
-                    failureResult -> LOGGER.error("Error to find the task ID => " + failureResult.getMessage()));
+        this.find(taskId).subscribe().with(
+                taskResult -> LOGGER.info("Command to execute: " + taskResult.getExecutionCommand()),
+                failureResult -> LOGGER.error("Error to find the task ID => " + failureResult.getMessage()));
     }
 }

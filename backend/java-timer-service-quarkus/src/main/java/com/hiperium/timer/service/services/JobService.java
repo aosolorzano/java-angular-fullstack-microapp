@@ -1,4 +1,4 @@
-package com.hiperium.timer.service.model.services;
+package com.hiperium.timer.service.services;
 
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.utils.TaskJobUtil;
