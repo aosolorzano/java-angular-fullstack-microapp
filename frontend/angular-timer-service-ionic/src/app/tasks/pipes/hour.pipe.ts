@@ -9,10 +9,13 @@ export class HourPipe implements PipeTransform {
     if (hour === 0) {
       return '00';
     }
-    if (hour < 10) {
-      return '0'.concat(hour.toString());
+    if (hour.toString().startsWith('0')) {
+      return hour.toString();
     }
-    return hour.toString();
+    if (hour < 10) {
+      return '0' + hour;
+    } else {
+      return hour.toString();
+    }
   }
-
 }

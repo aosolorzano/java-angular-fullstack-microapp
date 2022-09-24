@@ -1,8 +1,9 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {TaskComponent} from "./pages/task/task.component";
-import {TasksComponent} from "./pages/tasks/tasks.component";
+import {TasksComponent} from "./components/tasks/tasks.component";
 import {TasksResolver} from "./reactive/tasks.resolver";
+import {SaveComponent} from "./components/save/save.component";
+import {TasksRoutesEnum} from "./utils/routes/tasks-routes.enum";
 
 const routes: Routes = [
   {
@@ -13,16 +14,12 @@ const routes: Routes = [
     }
   },
   {
-    path: 'create',
-    component: TaskComponent
+    path: TasksRoutesEnum.createRoute,
+    component: SaveComponent
   },
   {
-    path: 'update/:taskId',
-    component: TaskComponent
-  },
-  {
-    path: 'details/:taskId',
-    component: TaskComponent
+    path: TasksRoutesEnum.editRoute,
+    component: SaveComponent
   }
 ];
 

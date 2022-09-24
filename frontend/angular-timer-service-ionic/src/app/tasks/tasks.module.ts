@@ -9,15 +9,15 @@ import {MinutePipe} from "./pipes/minute.pipe";
 import {IonicModule} from "@ionic/angular";
 import {ReactiveFormsModule} from "@angular/forms";
 import {SearchComponent} from "./components/search/search.component";
-import {TaskComponent} from "./pages/task/task.component";
-import {TasksComponent} from "./pages/tasks/tasks.component";
+import {TasksComponent} from "./components/tasks/tasks.component";
 import {TasksService} from "./services/tasks.service";
 import {TasksResolver} from "./reactive/tasks.resolver";
 import {EffectsModule} from "@ngrx/effects";
 import {TasksEffects} from "./reactive/tasks.effects";
 import {StoreModule} from "@ngrx/store";
-import {tasksReducer} from "./reactive/reducers/tasks.reducers";
+import {tasksReducer} from "./reactive/tasks.reducers";
 import {TasksStoreKeyEnum} from "./utils/common/store-keys.enum";
+import {SaveComponent} from "./components/save/save.component";
 
 @NgModule({
   imports: [
@@ -36,7 +36,7 @@ import {TasksStoreKeyEnum} from "./utils/common/store-keys.enum";
     MinutePipe,
     SearchComponent,
     TasksComponent,
-    TaskComponent
+    SaveComponent
   ],
   providers: [
     TasksResolver,

@@ -1,16 +1,21 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {TasksState} from './reducers/tasks.reducers';
-import * as tasksAdapterSelectors from './reducers/tasks.reducers';
+import {TasksState} from './tasks.reducers';
+import * as tasksReducerAdapter from './tasks.reducers';
 import {TasksStoreKeyEnum} from "../utils/common/store-keys.enum";
 
-export const tasksFeatureSelector = createFeatureSelector<TasksState>(TasksStoreKeyEnum.tasksFeatureName);
+export const tasksStateSelector = createFeatureSelector<TasksState>(TasksStoreKeyEnum.tasksFeatureName);
 
-export const selectAllEntityTasks = createSelector(
-  tasksFeatureSelector,
-  tasksAdapterSelectors.selectAll
+export const selectAllTasksLoaded = createSelector(
+  tasksStateSelector,
+  tasksReducerAdapter.selectAll
 );
 
 export const areTasksLoaded = createSelector(
-  tasksFeatureSelector,
-  tasksState => tasksState.allTasksLoaded
+  tasksStateSelector,
+  currentState => currentState.allTasksLoaded
+);
+
+export const selectTaskById = (taskId: string) => createSelector(
+  selectAllTasksLoaded,
+  (tasks) => tasks.find(task => task.id === taskId)
 );

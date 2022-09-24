@@ -110,11 +110,11 @@ ionic g component shared/components/header --spec=false
 ```
 To create a new **page** component without the spec file:
 ```
-ionic g page shared/pages/loginAction --spec=false
+ionic g page shared/pages/home --spec=false
 ```
 If you want to only visualize the files that will be created, add the dry-run directive:
 ```
-ionic g page shared/pages/loginAction --spec=false --dry-run
+ionic g page shared/pages/home --spec=false --dry-run
 ```
 To create a new angular **service** without the test file, you can execute the following:
 ```
@@ -139,7 +139,7 @@ npm install date-fns-tz --save
 ```
 
 ## BACKEND
-### Running the Timer Service locally using Docker Compose
+### Running the Timer Service using Docker Compose
 Build the Timer Service container image:
 ```
 docker-compose -f utils/docker/docker-compose.yml build
@@ -149,7 +149,7 @@ Deploy the local cluster of containers using Docker Compose:
 docker-compose -f utils/docker/docker-compose.yml up
 ```
 
-### Running Timer Service changes using Docker Compose
+### Building and Deploying changes using Docker Compose
 If you want to deploy your local changes after the initial setup, you can use the following command:
 ```
 docker-compose -f utils/docker/docker-compose.yml up --build
@@ -159,6 +159,11 @@ docker-compose -f utils/docker/docker-compose.yml up --build
 Navigate to 'utils/aws' folder and then execute the following command:
 ```
 copilot deploy --app timerservice --env dev --name tasks
+```
+
+### Getting local DynamoDB Task's data using AWS CLI
+```
+aws dynamodb scan --table-name Tasks --endpoint-url http://localhost:8000
 ```
 
 ### Running Timer Service using Docker

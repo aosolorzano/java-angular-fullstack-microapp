@@ -1,17 +1,25 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {AuthState} from './reducers/auth.reducers';
+import {AuthState} from './auth.reducers';
 import {AuthStoreKeyEnum} from "../utils/store/store-keys.enum";
 
-export const authFeatureSelector = createFeatureSelector<AuthState>(AuthStoreKeyEnum.authFeatureName);
+export const authStateSelector = createFeatureSelector<AuthState>(AuthStoreKeyEnum.authFeatureName);
 
-export const isLoggedIn = createSelector(authFeatureSelector,
-    authState => !!authState.user
+export const  isUserLoggedIn = createSelector(
+  authStateSelector,
+  (state: AuthState) => !!state.user
 );
 
-export const getSessionToken = createSelector(authFeatureSelector,
-  authState => authState.user?.token
+export const isUserLoggedOut = createSelector(
+  isUserLoggedIn,
+  loggedIn => !loggedIn
 );
 
-export const getUserFullName = createSelector(authFeatureSelector,
-  authState => authState.user?.name
+export const getSessionToken = createSelector(
+  authStateSelector,
+  (state: AuthState) => state.user?.token
+);
+
+export const getUserFullName = createSelector(
+  authStateSelector,
+  (state: AuthState) => state.user?.name
 );

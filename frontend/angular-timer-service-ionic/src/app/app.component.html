@@ -1,8 +1,8 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu *ngIf="userLoggedIn$ | async" contentId="main-content" type="overlay">
+    <ion-menu contentId="main-content" type="overlay">
       <ion-content>
-        <ion-list id="inbox-list">
+        <ion-list id="inbox-list" *ngIf="userLoggedIn$ | async">
           <ion-list-header>Welcome</ion-list-header>
           <ion-note>{{ username$ | async }}</ion-note>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
@@ -15,6 +15,15 @@
             <ion-item button="true" (click)="signOut()" lines="none" detail="false">
               <ion-icon slot="start" ios="log-out-outline" md="log-out-sharp"></ion-icon>
               <ion-label>Sign Out</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+
+        <ion-list id="logout-list" *ngIf="userLoggedOut$ | async">
+          <ion-menu-toggle auto-hide="false">
+            <ion-item routerDirection="root" routerLink="/login" lines="none" detail="false">
+              <ion-icon slot="start" ios="log-in-outline" md="log-in-sharp"></ion-icon>
+              <ion-label>Login</ion-label>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>

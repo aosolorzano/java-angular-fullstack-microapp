@@ -6,13 +6,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class DaysPipe implements PipeTransform {
 
   private sortedDays = {
-    "Mo": 1,
-    "Tu": 2,
-    "We": 3,
-    "Th": 4,
-    "Fr": 5,
-    "Sa": 6,
-    "Su": 7
+    "Mon": 1,
+    "Tue": 2,
+    "Wed": 3,
+    "Thu": 4,
+    "Fri": 5,
+    "Sat": 6,
+    "Sun": 7
   };
 
   transform(dayList: Array<string>): Array<string> {
@@ -27,25 +27,25 @@ export class DaysPipe implements PipeTransform {
     dayList.forEach((value, i) => {
       switch (value) {
         case 'MON':
-          newDayList.push('Mo');
+          newDayList.push('Mon');
           break;
         case 'TUE':
-          newDayList.push('Tu');
+          newDayList.push('Tue');
           break;
         case 'WED':
-          newDayList.push('We');
+          newDayList.push('Wed');
           break;
         case 'THU':
-          newDayList.push('Th');
+          newDayList.push('Thu');
           break;
         case 'FRI':
-          newDayList.push('Fr');
+          newDayList.push('Fri');
           break;
         case 'SAT':
-          newDayList.push('Sa');
+          newDayList.push('Sat');
           break;
         case 'SUN':
-          newDayList.push('Su');
+          newDayList.push('Sun');
           break;
       };
     });

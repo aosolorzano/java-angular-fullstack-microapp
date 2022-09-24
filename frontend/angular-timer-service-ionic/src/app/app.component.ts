@@ -1,11 +1,16 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from '@angular/router';
+import {NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {Observable} from "rxjs";
-import {Logger} from 'aws-amplify';
+import {Auth, Logger} from 'aws-amplify';
 import {LOG_TYPE} from '@aws-amplify/core/lib-esm/Logger';
-import {AuthService} from './auth/services/auth.service';
-import {AuthPagesEnum} from "./auth/utils/routes/auth-pages.enum";
 import {TasksPagesEnum} from "./tasks/utils/routes/tasks-pages.enum";
+import {AuthStoreKeyEnum} from "./auth/utils/store/store-keys.enum";
+import {select, Store} from "@ngrx/store";
+import {AppState} from "./shared/reactive/reducers/app.reducer";
+import {getUserFullName, isUserLoggedIn, isUserLoggedOut} from "./auth/reactive/auth.selectors";
+import {SharedStoreKeyEnum} from "./shared/utils/storage/store-keys.enum";
+import {AuthActions} from "./auth/reactive/action.types";
+import {AuthPagesEnum} from "./auth/utils/routes/auth-pages.enum";
 
 @Component({
   selector: 'app-root',
@@ -16,36 +21,53 @@ export class AppComponent implements OnInit {
   public appPages = [
     {title: 'Tasks', url: TasksPagesEnum.homePage, icon: 'calendar-number'}
   ];
+  public loading = true;
   public username$: Observable<string>;
   public userLoggedIn$: Observable<boolean>;
+  public userLoggedOut$: Observable<boolean>;
   private currentRoute: string;
-  private loading = true;
   private logger = new Logger('AppComponent', LOG_TYPE.DEBUG);
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, private store: Store<AppState>) {
   }
 
   public async ngOnInit() {
     this.logger.debug('ngOnInit - START');
     this.currentRoute = this.router.url;
+    // Validate if user is logged when the page is refreshed.
+    const userData = localStorage.getItem(AuthStoreKeyEnum.userDataKeyName);
+    if (userData) {
+      this.logger.debug('ngOnInit - User data found in local storage.');
+      this.store.dispatch(AuthActions.loginAction({user: JSON.parse(userData)}));
+    } else {
+      this.logger.debug('ngOnInit - User is not logged in.');
+    }
+    // Subscribe to router events to store the actual route page.
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.loading = true;
-        this.logger.debug('Route Navigation Start: ', event.url);
       } else if (event instanceof NavigationEnd) {
         this.loading = false;
         this.currentRoute = event.url;
         this.logger.debug('Route Navigation End: ', this.currentRoute);
+        localStorage.setItem(SharedStoreKeyEnum.actualPageKeyName, this.currentRoute);
       }
     });
-    this.userLoggedIn$ = this.authService.isUserLoggedIn();
-    this.username$ = this.authService.getUserFullName();
+    // Subscribe to store events triggered by other components.
+    this.store.subscribe((state: AppState) => {
+      this.logger.debug('Store value; ', state);
+    });
+    this.userLoggedIn$ = this.store.pipe(select(isUserLoggedIn));
+    this.userLoggedOut$ = this.store.pipe(select(isUserLoggedOut));
+    this.username$ = this.store.pipe(select(getUserFullName));
     this.logger.debug('ngOnInit - END');
   }
 
   public async signOut() {
     this.logger.debug('signOut() - START');
-    await this.authService.userLoggedOut();
+    await Auth.signOut({global: true}).then(() => {
+      this.store.dispatch(AuthActions.logoutAction());
+    });
     await this.router.navigateByUrl(AuthPagesEnum.loginPage);
     this.logger.debug('signOut() - END');
   }

@@ -1,7 +1,7 @@
 import {createEntityAdapter, EntityState} from '@ngrx/entity';
 import {createReducer, on} from '@ngrx/store';
-import {compareTasks, Task} from "../../model/task";
-import {TasksActions} from "../action.types";
+import {compareTasks, Task} from "../model/task";
+import {TasksActions} from "./action.types";
 
 /*
  * The EntityState is a predefined generic interface for an entity collection.
@@ -21,25 +21,22 @@ export const initialTasksState = tasksEntityAdapter.getInitialState({
 
 export const tasksReducer = createReducer(
   initialTasksState,
-  on(TasksActions.storeAllTasksAction, (tasksState, action) =>
+  on(TasksActions.storeAllTasksAction, (currentState: EntityState<Task>, action) =>
     tasksEntityAdapter.addMany(action.tasksFound, {
-      ...tasksState,
+      ...currentState,
       allTasksLoaded: true
-    })),
-  on(TasksActions.createTaskAction, (tasksState, action) =>
-    tasksEntityAdapter.addOne(action.newTask, {
-      ...tasksState
     })
   ),
-  on(TasksActions.updateTaskAction, (tasksState, action) =>
-    tasksEntityAdapter.updateOne(action.updatedTask, {
-      ...tasksState
-    })
+  on(TasksActions.storeCreatedTaskAction,
+    (currentState, action) =>
+    tasksEntityAdapter.addOne(action.createdTask, currentState)
   ),
-  on(TasksActions.deleteTaskAction, (tasksState, action) =>
-    tasksEntityAdapter.removeOne(action.taskId, {
-      ...tasksState
-    })
+  on(TasksActions.updateTaskAction,
+    (currentState, action) =>
+    tasksEntityAdapter.updateOne(action.updatedTask, currentState)
+  ),
+  on(TasksActions.deleteTaskAction, (currentState, action) =>
+    tasksEntityAdapter.removeOne(action.taskId, currentState)
   )
   /*on(removeAllTasksAction, (tasksState) =>
     tasksEntityAdapter.removeAll({
