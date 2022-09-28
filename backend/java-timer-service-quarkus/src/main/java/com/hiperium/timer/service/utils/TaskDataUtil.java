@@ -1,7 +1,7 @@
 package com.hiperium.timer.service.utils;
 
 import com.hiperium.timer.service.model.Task;
-import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
+import com.hiperium.timer.service.utils.enums.TaskColumnEnum;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.nio.charset.StandardCharsets;
@@ -18,8 +18,8 @@ public final class TaskDataUtil {
     private static final char[] hexArray = "JavaTimerService".toCharArray();
 
     public static final List<String> COLUM_NAMES = List.of(Arrays
-            .stream(TaskColumnsEnum.values())
-            .map(TaskColumnsEnum::columnName)
+            .stream(TaskColumnEnum.values())
+            .map(TaskColumnEnum::columnName)
             .toArray(String[]::new));
 
     private TaskDataUtil() {
@@ -31,42 +31,42 @@ public final class TaskDataUtil {
         if (Objects.nonNull(item) && !item.isEmpty()) {
             // REQUIRED COLUMNS
             task.setId(
-                    item.get(TaskColumnsEnum.TASK_ID_COL.columnName()).s());
+                    item.get(TaskColumnEnum.TASK_ID_COL.columnName()).s());
             task.setName(
-                    item.get(TaskColumnsEnum.TASK_NAME_COL.columnName()).s());
+                    item.get(TaskColumnEnum.TASK_NAME_COL.columnName()).s());
             task.setHour(Integer.valueOf(
-                    item.get(TaskColumnsEnum.TASK_HOUR_COL.columnName()).n()));
+                    item.get(TaskColumnEnum.TASK_HOUR_COL.columnName()).n()));
             task.setMinute(Integer.valueOf(
-                    item.get(TaskColumnsEnum.TASK_MINUTE_COL.columnName()).n()));
-            task.setDaysOfWeek(
-                    item.get(TaskColumnsEnum.TASK_DAYS_OF_WEEK_COL.columnName()).ss());
+                    item.get(TaskColumnEnum.TASK_MINUTE_COL.columnName()).n()));
+            task.setExecutionDays(
+                    item.get(TaskColumnEnum.TASK_EXECUTION_DAYS_COL.columnName()).ss());
             task.setExecutionCommand(
-                    item.get(TaskColumnsEnum.TASK_EXEC_COMMAND_COL.columnName()).s());
+                    item.get(TaskColumnEnum.TASK_EXEC_COMMAND_COL.columnName()).s());
             task.setDescription(
-                    item.get(TaskColumnsEnum.TASK_DESCRIPTION_COL.columnName()).s());
+                    item.get(TaskColumnEnum.TASK_DESCRIPTION_COL.columnName()).s());
             task.setCreatedAt(TaskDataUtil.getZonedDateTimeFromString(
-                    item.get(TaskColumnsEnum.TASK_CREATED_AT_COL.columnName()).s()));
+                    item.get(TaskColumnEnum.TASK_CREATED_AT_COL.columnName()).s()));
             // OPTIONAL COLUMNS
-            if (Objects.nonNull(item.get(TaskColumnsEnum.TASK_EXEC_UNTIL_COL.columnName()))) {
+            if (Objects.nonNull(item.get(TaskColumnEnum.TASK_EXEC_UNTIL_COL.columnName()))) {
                 task.setExecuteUntil(TaskDataUtil.getZonedDateTimeFromString(
-                        item.get(TaskColumnsEnum.TASK_EXEC_UNTIL_COL.columnName()).s()));
+                        item.get(TaskColumnEnum.TASK_EXEC_UNTIL_COL.columnName()).s()));
             }
-            if (Objects.nonNull(item.get(TaskColumnsEnum.TASK_UPDATED_AT_COL.columnName()))) {
+            if (Objects.nonNull(item.get(TaskColumnEnum.TASK_UPDATED_AT_COL.columnName()))) {
                 task.setUpdatedAt(TaskDataUtil.getZonedDateTimeFromString(
-                        item.get(TaskColumnsEnum.TASK_UPDATED_AT_COL.columnName()).s()));
+                        item.get(TaskColumnEnum.TASK_UPDATED_AT_COL.columnName()).s()));
             }
         }
         return task;
     }
 
-    public static AttributeValue getAttributeValueFromTask(TaskColumnsEnum columName, Task task) {
+    public static AttributeValue getAttributeValueFromTask(TaskColumnEnum columName, Task task) {
         AttributeValue.Builder builder = AttributeValue.builder();
         switch (columName) {
             case TASK_ID_COL -> builder.s(task.getId());
             case TASK_NAME_COL -> builder.s(task.getName());
             case TASK_HOUR_COL -> builder.n(task.getHour().toString());
             case TASK_MINUTE_COL -> builder.n(task.getMinute().toString());
-            case TASK_DAYS_OF_WEEK_COL -> builder.ss(task.getDaysOfWeek());
+            case TASK_EXECUTION_DAYS_COL -> builder.ss(task.getExecutionDays());
             case TASK_EXEC_COMMAND_COL -> builder.s(task.getExecutionCommand());
             case TASK_EXEC_UNTIL_COL -> {
                 if (Objects.isNull(task.getExecuteUntil())) {

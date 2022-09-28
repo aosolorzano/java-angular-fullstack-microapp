@@ -1,24 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {Task} from "../../model/task";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ToastController} from "@ionic/angular";
-import {select, Store} from "@ngrx/store";
-import {Observable} from "rxjs";
-import {selectTaskById} from "../../reactive/tasks.selectors";
 import {TasksPagesEnum} from "../../utils/routes/tasks-pages.enum";
 import {ZonedDateUtil} from "../../utils/dates/zoned.date";
-import {createTaskAction, updateTaskAction} from "../../reactive/tasks.actions";
-import {Update} from "@ngrx/entity";
 import {ButtonsState} from "../../../shared/utils/buttons/buttons.state";
-import {AppState} from "../../../shared/reactive/reducers/app.reducer";
+import {TasksEntityService} from "../../services/tasks-entity.service";
 
 @Component({
   selector: 'app-save',
   templateUrl: './save.component.html',
   styleUrls: ['./save.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SaveComponent extends ButtonsState implements OnInit {
 
@@ -28,7 +24,7 @@ export class SaveComponent extends ButtonsState implements OnInit {
     hour: [null, [Validators.required, Validators.min(0), Validators.max(23)]],
     minute: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
     executionTime: [null, Validators.required],
-    daysOfWeek: [null, Validators.required],
+    executionDays: [null, Validators.required],
     executeUntil: [null, Validators.required]
   });
   public executionTimeText = '';
@@ -36,13 +32,13 @@ export class SaveComponent extends ButtonsState implements OnInit {
   public taskPageTitle: string;
 
   private logger = new Logger('SaveComponent', LOG_TYPE.DEBUG);
-  private task: Task;
+  private originalTask: Task;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private formBuilder: FormBuilder,
               private toastController: ToastController,
-              private store: Store<AppState>) {
+              private taskEntityService: TasksEntityService) {
     super();
   }
 
@@ -54,29 +50,41 @@ export class SaveComponent extends ButtonsState implements OnInit {
     } else {
       this.taskPageTitle = 'Update Task';
       const taskId = this.route.snapshot.paramMap.get('taskId');
-      if (taskId) {
-        const task$: Observable<Task> = this.store.pipe(select(selectTaskById(taskId)));
-        task$.subscribe(task => {
-          if (task) {
-            this.task = task;
-            this.assignTaskValuesToForm(task);
-          }
-        });
-      } else {
-        await this.router.navigate([TasksPagesEnum.homePage]);
-        await this.presentToast('Task ID not found.');
-      }
+      this.taskEntityService.getByKey(taskId).subscribe(async task => {
+        if (task) {
+          this.originalTask = task;
+          this.assignTaskValuesToForm(this.originalTask);
+        } else {
+          await this.presentToast(`Task <b>${taskId}</b> not found.`);
+          await this.router.navigate([TasksPagesEnum.homePage]);
+        }
+      });
     }
     this.logger.debug('ngOnInit() - END');
   }
 
-  public formatExecuteUntilDate(value: string): string {
+  public formatExecuteUntilDate(value) {
     this.logger.debug('formatExecuteUntilDate() - value: ', value);
     const formattedDate: string = ZonedDateUtil.getParsedZonedDate(value, 'dd MMM yyyy');
     this.taskForm.patchValue({
       executeUntil: formattedDate
     });
     return formattedDate;
+  }
+
+  public formatExecutionTime(value) {
+    const formattedTime: string = ZonedDateUtil.getParsedZonedDate(value, 'HH:mm');
+    const taskTimeValues: string[] = formattedTime.split(':');
+    this.taskForm.patchValue({
+      hour: taskTimeValues[0]
+    });
+    this.taskForm.patchValue({
+      minute: taskTimeValues[1]
+    });
+    this.taskForm.patchValue({
+      executionTime: formattedTime,
+    });
+    return formattedTime;
   }
 
   public async save() {
@@ -86,10 +94,8 @@ export class SaveComponent extends ButtonsState implements OnInit {
     }
     if (super.isCreatingState()) {
       this.createTask();
-      await this.presentToast('Task created successfully.');
     } else if (super.isUpdatingState()) {
       this.updateTask();
-      await this.presentToast('Task updated successfully.');
     }
     await this.router.navigateByUrl(TasksPagesEnum.homePage);
   }
@@ -100,8 +106,8 @@ export class SaveComponent extends ButtonsState implements OnInit {
       this.executeUntilText = '';
       this.taskForm.reset();
     } else if (super.isUpdatingState()) {
-      this.taskForm.patchValue(this.task);
-      this.initTaskDates(this.task);
+      this.taskForm.patchValue(this.originalTask);
+      this.initTaskDates(this.originalTask);
     }
     await this.router.navigateByUrl(TasksPagesEnum.homePage);
   }
@@ -118,45 +124,30 @@ export class SaveComponent extends ButtonsState implements OnInit {
     this.executeUntilText = this.formatExecuteUntilDate(task.executeUntil);
   }
 
-  public formatExecutionTime(value: string): string {
-    const formattedTime: string = ZonedDateUtil.getParsedZonedDate(value, 'HH:mm');
-    const taskTimeValues: string[] = formattedTime.split(':');
-    this.taskForm.patchValue({
-      hour: taskTimeValues[0]
-    });
-    this.taskForm.patchValue({
-      minute: taskTimeValues[1]
-    });
-    this.taskForm.patchValue({
-      executionTime: formattedTime,
-    });
-    return formattedTime;
-  }
-
   private createTask() {
     const formValues = {...this.taskForm.value};
-    delete formValues.executionTime;  // field not needed in the Task model.
+    delete formValues.executionTime;
     let newTask: Task = formValues;
     newTask.executionCommand = "python3 /home/pi/faker/faker.py";
-    newTask.executeUntil = ZonedDateUtil.getStringZonedDate(
-      ZonedDateUtil.setTimeToMidnight(new Date(newTask.executeUntil)));
-    this.store.dispatch(createTaskAction({newTask}));
+    newTask.executeUntil = ZonedDateUtil.getStringZonedDate(ZonedDateUtil.setTimeToMidnight(new Date(newTask.executeUntil)));
+    this.taskEntityService.add(newTask).subscribe(async (createdTask: Task) => {
+      this.logger.debug('createTask() - Task created successfully: ', createdTask);
+      await this.presentToast('Task created successfully.');
+    });
   }
 
   private updateTask() {
     const formValues = {...this.taskForm.value};
     delete formValues.executionTime;
-    let formTask: Task = formValues;
-    formTask.id = this.task.id;
-    formTask.executionCommand = this.task.executionCommand;
-    formTask.executeUntil = ZonedDateUtil.getStringZonedDate(
-      ZonedDateUtil.setTimeToMidnight(new Date(formTask.executeUntil)));
-    formTask.createdAt = this.task.createdAt;
-    const updatedTask: Update<Task> = {
-      id: this.task.id,
-      changes: formTask
-    };
-    this.store.dispatch(updateTaskAction({updatedTask}));
+    let updatedTask: Task = formValues;
+    updatedTask.id = this.originalTask.id;
+    updatedTask.executionCommand = this.originalTask.executionCommand;
+    updatedTask.executeUntil = ZonedDateUtil.getStringZonedDate(ZonedDateUtil.setTimeToMidnight(new Date(updatedTask.executeUntil)));
+    updatedTask.createdAt = this.originalTask.createdAt;
+    this.taskEntityService.update(updatedTask).subscribe(async (taskUpdated: Task) => {
+      this.logger.debug('updateTask() - Task updated successfully: ', taskUpdated);
+      await this.presentToast('Task updated successfully.');
+    });
   }
 
   private async presentToast(message: string) {

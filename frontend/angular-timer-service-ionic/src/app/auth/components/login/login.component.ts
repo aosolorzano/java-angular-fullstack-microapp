@@ -23,6 +23,15 @@ export class LoginComponent implements OnInit {
   public async ngOnInit() {
     this.logger.debug('ngOnInit() - START');
     Hub.listen('auth', this.listener);
+    try {
+      const cognitoSession = await Auth.currentSession();
+      if (cognitoSession) {
+        this.logger.debug('ngOnInit() - User is already logged in: ', cognitoSession);
+        await this.loginUser(cognitoSession);
+      }
+    } catch (error) {
+      this.logger.debug('ngOnInit() - User is not logged in.');
+    }
     this.logger.debug('ngOnInit() - END ');
   }
 
@@ -32,16 +41,20 @@ export class LoginComponent implements OnInit {
     switch (cognitoAuthEvent) {
       case 'signIn':
         const cognitoSession = await Auth.currentSession();
-        const cognitoUser = await Auth.currentUserInfo();
-        const user = this.getUserSessionData(cognitoSession, cognitoUser);
-        this.store.dispatch(AuthActions.loginAction({user}));
-        await this.router.navigateByUrl(TasksPagesEnum.homePage);
+        await this.loginUser(cognitoSession);
         break;
       case 'signIn_failure':
         this.logger.debug('listener() - User sign in failed...');
         break;
     }
     this.logger.debug('listener() - END');
+  }
+
+  private async loginUser(cognitoSession) {
+    const cognitoUser = await Auth.currentUserInfo();
+    const user = this.getUserSessionData(cognitoSession, cognitoUser);
+    this.store.dispatch(AuthActions.loginAction({user}));
+    await this.router.navigateByUrl(TasksPagesEnum.homePage);
   }
 
   private getUserSessionData(cognitoSession, cognitoUser): User {

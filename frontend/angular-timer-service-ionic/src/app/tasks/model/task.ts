@@ -1,14 +1,14 @@
 export interface Task {
   id: string;
   name: string;
+  description?: string;
   hour: number;
   minute: number;
-  daysOfWeek: Array<string>;
+  executionDays: Array<string>;
   executionCommand: string;
   executeUntil: string;
-  description?: string;
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date;
 }
 
 export function compareTasks(t1: Task, t2: Task) {

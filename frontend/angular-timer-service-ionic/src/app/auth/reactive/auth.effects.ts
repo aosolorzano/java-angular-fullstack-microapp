@@ -18,7 +18,7 @@ export class AuthEffects {
     this.actions$
       .pipe(
         ofType(AuthActions.loginAction),
-        tap(async action => {
+        tap(action => {
             this.logger.debug('LOGIN_ACTION: Adding user data to local storage.');
             localStorage.setItem(AuthStoreKeyEnum.userDataKeyName, JSON.stringify(action.user));
           }
@@ -28,7 +28,7 @@ export class AuthEffects {
     this.actions$
       .pipe(
         ofType(AuthActions.logoutAction),
-        tap(async action => {
+        tap(action => {
             this.logger.debug('LOGOUT_ACTION: Removing user data from local storage.');
             localStorage.removeItem(AuthStoreKeyEnum.userDataKeyName);
           }

@@ -3,8 +3,8 @@ package com.hiperium.timer.service.resources;
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.utils.TaskBeanUtil;
 import com.hiperium.timer.service.utils.TaskDataUtil;
-import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
-import com.hiperium.timer.service.utils.enums.TaskDaysEnum;
+import com.hiperium.timer.service.utils.enums.TaskColumnEnum;
+import com.hiperium.timer.service.utils.enums.TaskDayEnum;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.jboss.logging.Logger;
@@ -33,7 +33,7 @@ public class TaskResourceTest {
     @BeforeAll
     static void beforeAll() {
         testTask = new Task("Task name", 15, 15,
-                List.of(TaskDaysEnum.WED.name()),
+                List.of(TaskDayEnum.WED.name()),
                 "java -jar execute-robot.jar",
                 null,
                 "Task description");
@@ -81,11 +81,11 @@ public class TaskResourceTest {
     @Order(5)
     void mustVerifyChangedTaskFields() throws ReflectiveOperationException {
         Task updated = new Task("Task name", 12, 10,
-                List.of(TaskDaysEnum.TUE.name(), TaskDaysEnum.THU.name(), TaskDaysEnum.FRI.name()),
+                List.of(TaskDayEnum.TUE.name(), TaskDayEnum.THU.name(), TaskDayEnum.FRI.name()),
                 "Activate garbage collector robot.",
                 ZonedDateTime.now(),
                 "Execute command to start the Task.");
-        List<TaskColumnsEnum> changedProperties;
+        List<TaskColumnEnum> changedProperties;
         try {
             changedProperties = new ArrayList<>(TaskBeanUtil.getModifiedFields(testTask, updated));
             LOGGER.debug("Changed properties result: " + changedProperties);

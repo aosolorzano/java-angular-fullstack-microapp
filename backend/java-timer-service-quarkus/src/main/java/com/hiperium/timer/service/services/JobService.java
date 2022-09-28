@@ -84,6 +84,7 @@ public class JobService {
     private void createAndScheduleJob(Task task) throws SchedulerException {
         JobDetail job = TaskJobUtil.getJobDetailFromTask(task);
         Trigger trigger = TaskJobUtil.getTriggerFromTask(task, this.zoneId);
+        // TODO: Fix error SchedulerException: Based on configured schedule, the given trigger 'Task#TriggersGroup.mrmremSiecTS' will never fire.
         this.scheduler.scheduleJob(job, trigger);
     }
 

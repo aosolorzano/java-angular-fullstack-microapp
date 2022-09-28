@@ -1,6 +1,6 @@
 package com.hiperium.timer.service.utils.enums;
 
-public enum TaskDaysEnum {
+public enum TaskDayEnum {
     MON,
     TUE,
     WED,
@@ -9,9 +9,9 @@ public enum TaskDaysEnum {
     SAT,
     SUN;
 
-    public static TaskDaysEnum getEnumFromString(String dayOfWeek) {
-        TaskDaysEnum result = null;
-        for (TaskDaysEnum daysEnum : TaskDaysEnum.values()) {
+    public static TaskDayEnum getEnumFromString(String dayOfWeek) {
+        TaskDayEnum result = null;
+        for (TaskDayEnum daysEnum : TaskDayEnum.values()) {
             if (daysEnum.name().equals(dayOfWeek)) {
                 result = daysEnum;
                 break;

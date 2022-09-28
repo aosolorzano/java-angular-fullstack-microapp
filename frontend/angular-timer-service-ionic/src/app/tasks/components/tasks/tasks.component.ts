@@ -1,22 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {Logger} from 'aws-amplify';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {Hub, Logger} from 'aws-amplify';
 import {LOG_TYPE} from '@aws-amplify/core/lib-esm/Logger';
 import {Router} from '@angular/router';
 import {Observable} from "rxjs";
-import {select, Store} from "@ngrx/store";
 import {AlertController, PopoverController, ToastController} from '@ionic/angular';
 import {Task} from '../../model/task';
 import {SearchComponent} from '../search/search.component';
 import {TasksPagesEnum} from "../../utils/routes/tasks-pages.enum";
-import {selectAllTasksLoaded} from "../../reactive/tasks.selectors";
-import {TasksService} from "../../services/tasks.service";
-import {deleteTaskAction} from "../../reactive/tasks.actions";
-import {AppState} from "../../../shared/reactive/reducers/app.reducer";
+import {TasksEntityService} from "../../services/tasks-entity.service";
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TasksComponent implements OnInit {
 
@@ -26,16 +23,17 @@ export class TasksComponent implements OnInit {
   public tasks$: Observable<Task[]>;
   private logger = new Logger('TasksComponent', LOG_TYPE.DEBUG);
 
-  constructor(private router: Router, private alertController: AlertController,
+  constructor(private router: Router,
+              private alertController: AlertController,
               private toastController: ToastController,
               private popoverController: PopoverController,
-              private tasksService: TasksService,
-              private store: Store<AppState>) {
+              private taskEntityService: TasksEntityService) {
   }
 
-  public ngOnInit() {
+  public async ngOnInit() {
     this.logger.debug('ngOnInit() - START');
-    this.tasks$ = this.store.pipe(select(selectAllTasksLoaded));
+    Hub.listen('auth', this.listener);
+    this.tasks$ = this.taskEntityService.entities$;
     this.logger.debug('ngOnInit() - END');
   }
 
@@ -69,8 +67,12 @@ export class TasksComponent implements OnInit {
     await this.router.navigateByUrl(TasksPagesEnum.createTaskPage);
   }
 
-  public async update(task: Task) {
-    await this.router.navigate([TasksPagesEnum.homePage, task.id]);
+  public async edit(taskId: string) {
+    await this.router.navigate([TasksPagesEnum.editTaskPage, taskId]);
+  }
+
+  public async details(taskId: string) {
+    await this.router.navigate([TasksPagesEnum.detailsTaskPage, taskId]);
   }
 
   public async presentDeleteTaskAlert(task: Task) {
@@ -98,7 +100,7 @@ export class TasksComponent implements OnInit {
 
   private async delete(task: Task) {
     this.logger.debug('delete() - START: ' + task.id);
-    this.store.dispatch(deleteTaskAction({taskId: task.id}));
+    this.taskEntityService.delete(task.id);
     await this.presentToast();
     this.logger.debug('delete() - END');
   }
@@ -111,4 +113,12 @@ export class TasksComponent implements OnInit {
     await toast.present();
   }
 
+  private listener = async (data) => {
+    this.logger.debug('listener() - START: ' + data.payload.event);
+    if (data.payload.event === 'signOut') {
+      this.logger.debug('listener() - Clearing NgRx Tasks Store.');
+      this.taskEntityService.clearCache();
+    }
+    this.logger.debug('listener() - END');
+  }
 }

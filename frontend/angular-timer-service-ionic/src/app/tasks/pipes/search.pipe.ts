@@ -24,7 +24,7 @@ export class SearchPipe implements PipeTransform {
         break;
       case 'day':
         result = arrayValues.filter(task =>
-          task.daysOfWeek.filter(day =>
+          task.executionDays.filter(day =>
             day.toLowerCase().startsWith(textToSearch.charAt(0))).length > 0
         );
         break;

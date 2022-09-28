@@ -27,49 +27,49 @@ public class TaskService extends AbstractTaskService {
 
     public Uni<Task> create(Task task) {
         LOGGER.debug("create() - START: " + task.getName());
-        return Uni.createFrom()
-                .completionStage(() ->
-                        this.dynamoAsyncClient.putItem(
-                                super.getPutItemRequest(task)))
-                .flatMap(putItemResponse ->
-                        this.jobService.create(task));
+        task.setId(TaskDataUtil.generateUUID(12));
+        return this.jobService.create(task)
+                .onItem()
+                .invoke(() -> this.dynamoAsyncClient.putItem(super.getPutItemRequest(task)))
+                .onFailure().call(throwable -> {
+                    LOGGER.error("create() - ERROR: " + throwable.getMessage());
+                    return Uni.createFrom().nullItem();
+                });
     }
 
     public Uni<Task> update(Task actualTask, Task updatedTask) {
         LOGGER.debug("update() - START: " + actualTask.getName());
-        return Uni.createFrom()
-                .completionStage(() ->
-                        this.dynamoAsyncClient.updateItem(
-                                super.getUpdateItemRequest(actualTask, updatedTask)))
-                .flatMap(updateItemResponse ->
-                        this.jobService.update(updatedTask));
+        return this.jobService.update(updatedTask)
+                .onItem()
+                .invoke(() -> this.dynamoAsyncClient.updateItem(super.getUpdateItemRequest(actualTask, updatedTask)))
+                .onFailure().call(throwable -> {
+                    LOGGER.error("update() - ERROR: " + throwable.getMessage());
+                    return Uni.createFrom().nullItem();
+                });
     }
 
     public Uni<Task> delete(Task task) {
         LOGGER.debug("delete() - START: " + task.getName());
-        return Uni.createFrom()
-                .completionStage(() ->
-                        this.dynamoAsyncClient.deleteItem(
-                                super.getDeleteItemRequest(task)))
-                .flatMap(deleteItemResponse ->
-                        this.jobService.delete(task));
+        return this.jobService.delete(task)
+                .onItem()
+                .invoke(() -> this.dynamoAsyncClient.deleteItem(super.getDeleteItemRequest(task)))
+                .onFailure().call(throwable -> {
+                    LOGGER.error("delete() - ERROR: " + throwable.getMessage());
+                    return Uni.createFrom().nullItem();
+                });
     }
 
     public Uni<Task> find(String id) {
         LOGGER.debug("find() - START");
         return Uni.createFrom()
-                .completionStage(() ->
-                        this.dynamoAsyncClient.getItem(
-                                super.getItemRequest(id)))
-                .map(itemResponse ->
-                        TaskDataUtil.getTaskFromAttributeValues(itemResponse.item()));
+                .completionStage(() -> this.dynamoAsyncClient.getItem(super.getItemRequest(id)))
+                .map(itemResponse -> TaskDataUtil.getTaskFromAttributeValues(itemResponse.item()));
     }
 
     public Uni<List<Task>> findAll() {
         LOGGER.debug("findAll() - START");
         return Uni.createFrom()
-                .completionStage(() -> this.dynamoAsyncClient.scan(
-                        super.getScanRequest()))
+                .completionStage(() -> this.dynamoAsyncClient.scan(super.getScanRequest()))
                 .map(response -> response.items()
                         .stream()
                         .map(TaskDataUtil::getTaskFromAttributeValues)

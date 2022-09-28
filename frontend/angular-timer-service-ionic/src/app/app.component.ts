@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   public username$: Observable<string>;
   public userLoggedIn$: Observable<boolean>;
   public userLoggedOut$: Observable<boolean>;
+
   private currentRoute: string;
   private logger = new Logger('AppComponent', LOG_TYPE.DEBUG);
 
@@ -53,10 +54,6 @@ export class AppComponent implements OnInit {
         localStorage.setItem(SharedStoreKeyEnum.actualPageKeyName, this.currentRoute);
       }
     });
-    // Subscribe to store events triggered by other components.
-    this.store.subscribe((state: AppState) => {
-      this.logger.debug('Store value; ', state);
-    });
     this.userLoggedIn$ = this.store.pipe(select(isUserLoggedIn));
     this.userLoggedOut$ = this.store.pipe(select(isUserLoggedOut));
     this.username$ = this.store.pipe(select(getUserFullName));
@@ -65,9 +62,8 @@ export class AppComponent implements OnInit {
 
   public async signOut() {
     this.logger.debug('signOut() - START');
-    await Auth.signOut({global: true}).then(() => {
-      this.store.dispatch(AuthActions.logoutAction());
-    });
+    this.store.dispatch(AuthActions.logoutAction());
+    await Auth.signOut({global: true});
     await this.router.navigateByUrl(AuthPagesEnum.loginPage);
     this.logger.debug('signOut() - END');
   }

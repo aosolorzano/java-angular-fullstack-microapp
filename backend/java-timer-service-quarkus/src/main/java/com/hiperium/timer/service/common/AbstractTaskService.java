@@ -3,7 +3,7 @@ package com.hiperium.timer.service.common;
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.utils.TaskBeanUtil;
 import com.hiperium.timer.service.utils.TaskDataUtil;
-import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
+import com.hiperium.timer.service.utils.enums.TaskColumnEnum;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -39,7 +39,7 @@ public abstract class AbstractTaskService {
     protected GetItemRequest getItemRequest(String id) {
         LOGGER.debug("getItemRequest() - START: " + id);
         Map<String, AttributeValue> key = new HashMap<>();
-        key.put(TaskColumnsEnum.TASK_ID_COL.columnName(), AttributeValue.builder().s(id).build());
+        key.put(TaskColumnEnum.TASK_ID_COL.columnName(), AttributeValue.builder().s(id).build());
         return GetItemRequest.builder()
                 .tableName(dynamodbTableName)
                 .key(key)
@@ -50,12 +50,9 @@ public abstract class AbstractTaskService {
     protected PutItemRequest getPutItemRequest(Task task) {
         LOGGER.debug("getPutItemRequest() - START: " + task);
         Map<String, AttributeValue> item = new HashMap<>();
-        task.setId(TaskDataUtil.generateUUID(25));
         task.setCreatedAt(ZonedDateTime.now(ZoneId.of(this.zoneId)));
-        for (TaskColumnsEnum columnNameEnum : TaskColumnsEnum.values()) {
-            if (columnNameEnum.equals(TaskColumnsEnum.TASK_UPDATED_AT_COL)) {
-                continue;
-            }
+        task.setUpdatedAt(task.getCreatedAt());
+        for (TaskColumnEnum columnNameEnum : TaskColumnEnum.values()) {
             item.put(columnNameEnum.columnName(), TaskDataUtil.getAttributeValueFromTask(columnNameEnum, task));
         }
         LOGGER.debug("getPutItemRequest() - Item values: " + item);
@@ -71,13 +68,13 @@ public abstract class AbstractTaskService {
         try {
             // ASSIGN ONLY UPDATED COLUMNS
             updatedTask.setUpdatedAt(ZonedDateTime.now(ZoneId.of(this.zoneId)));
-            List<TaskColumnsEnum> updatedColumnsEnum = TaskBeanUtil.getModifiedFields(actualTask, updatedTask);
+            List<TaskColumnEnum> updatedColumnsEnum = TaskBeanUtil.getModifiedFields(actualTask, updatedTask);
             if (updatedColumnsEnum.isEmpty()) {
                 throw new IllegalArgumentException("No modified fields were found in the requested task.");
             }
-            for (TaskColumnsEnum columnNameEnum : updatedColumnsEnum) {
-                if (columnNameEnum.equals(TaskColumnsEnum.TASK_ID_COL)
-                        || columnNameEnum.equals(TaskColumnsEnum.TASK_CREATED_AT_COL)) {
+            for (TaskColumnEnum columnNameEnum : updatedColumnsEnum) {
+                if (columnNameEnum.equals(TaskColumnEnum.TASK_ID_COL)
+                        || columnNameEnum.equals(TaskColumnEnum.TASK_CREATED_AT_COL)) {
                     continue;
                 }
                 updatedValues.put(columnNameEnum.columnName(), AttributeValueUpdate.builder()
@@ -107,7 +104,7 @@ public abstract class AbstractTaskService {
     }
 
     private HashMap<String, AttributeValue> getTaskIdItemKey(Task task) {
-        TASK_ITEM_KEY.put(TaskColumnsEnum.TASK_ID_COL.columnName(),
+        TASK_ITEM_KEY.put(TaskColumnEnum.TASK_ID_COL.columnName(),
                 AttributeValue.builder().s(task.getId()).build());
         return TASK_ITEM_KEY;
     }

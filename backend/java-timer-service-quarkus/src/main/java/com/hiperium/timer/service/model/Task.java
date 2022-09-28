@@ -1,7 +1,7 @@
 package com.hiperium.timer.service.model;
 
 import com.hiperium.timer.service.annotations.DynamoDbColumnName;
-import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
+import com.hiperium.timer.service.utils.enums.TaskColumnEnum;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.ZonedDateTime;
@@ -18,7 +18,7 @@ public class Task {
     private String name;
     private Integer hour;
     private Integer minute;
-    private List<String> daysOfWeek;
+    private List<String> executionDays;
     private String executionCommand;
     private ZonedDateTime executeUntil;
     private String description;
@@ -29,18 +29,18 @@ public class Task {
         // Nothing to implement
     }
 
-    public Task(String name, Integer hour, Integer minute, List<String> daysOfWeek,
+    public Task(String name, Integer hour, Integer minute, List<String> executionDays,
                 String executionCommand, ZonedDateTime executeUntil, String description) {
         this.name = name;
         this.hour = hour;
         this.minute = minute;
-        this.daysOfWeek = daysOfWeek;
+        this.executionDays = executionDays;
         this.executionCommand = executionCommand;
         this.executeUntil = executeUntil;
         this.description = description;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_ID_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_ID_COL)
     public String getId() {
         return id;
     }
@@ -49,7 +49,7 @@ public class Task {
         this.id = id;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_NAME_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_NAME_COL)
     public String getName() {
         return name;
     }
@@ -58,7 +58,7 @@ public class Task {
         this.name = name;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_EXEC_COMMAND_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_EXEC_COMMAND_COL)
     public String getExecutionCommand() {
         return executionCommand;
     }
@@ -67,7 +67,7 @@ public class Task {
         this.executionCommand = executionCommand;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_EXEC_UNTIL_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_EXEC_UNTIL_COL)
     public ZonedDateTime getExecuteUntil() {
         return executeUntil;
     }
@@ -76,7 +76,7 @@ public class Task {
         this.executeUntil = executeUntil;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_HOUR_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_HOUR_COL)
     public Integer getHour() {
         return hour;
     }
@@ -85,7 +85,7 @@ public class Task {
         this.hour = hour;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_MINUTE_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_MINUTE_COL)
     public Integer getMinute() {
         return minute;
     }
@@ -94,16 +94,16 @@ public class Task {
         this.minute = minute;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_DAYS_OF_WEEK_COL)
-    public List<String> getDaysOfWeek() {
-        return daysOfWeek;
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_EXECUTION_DAYS_COL)
+    public List<String> getExecutionDays() {
+        return executionDays;
     }
 
-    public void setDaysOfWeek(List<String> daysOfWeek) {
-        this.daysOfWeek = daysOfWeek;
+    public void setExecutionDays(List<String> executionDays) {
+        this.executionDays = executionDays;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_DESCRIPTION_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_DESCRIPTION_COL)
     public String getDescription() {
         return description;
     }
@@ -121,7 +121,7 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_UPDATED_AT_COL)
+    @DynamoDbColumnName(name = TaskColumnEnum.TASK_UPDATED_AT_COL)
     public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -150,7 +150,7 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", hour=" + hour +
                 ", minute=" + minute +
-                ", daysOfWeek=" + daysOfWeek +
+                ", executionDays=" + executionDays +
                 ", executionCommand='" + executionCommand + '\'' +
                 ", executeUntil=" + executeUntil +
                 ", description='" + description + '\'' +

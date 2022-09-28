@@ -2,10 +2,11 @@ package com.hiperium.timer.service.utils;
 
 import com.hiperium.timer.service.jobs.TaskJob;
 import com.hiperium.timer.service.model.Task;
-import com.hiperium.timer.service.utils.enums.TaskDaysEnum;
+import com.hiperium.timer.service.utils.enums.TaskDayEnum;
 import org.jboss.logging.Logger;
 import org.quartz.*;
 
+import java.time.Month;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.*;
@@ -36,29 +37,30 @@ public final class TaskJobUtil {
                 .withIdentity(task.getId(), TASK_TRIGGERS_GROUP)
                 .startNow()
                 .withSchedule(
-                        CronScheduleBuilder.atHourAndMinuteOnGivenDaysOfWeek(
-                                        task.getHour(), task.getMinute(),
-                                        getIntsFromDaysOfWeek(task.getDaysOfWeek()))
+                        CronScheduleBuilder
+                                .atHourAndMinuteOnGivenDaysOfWeek(
+                                        task.getHour(),
+                                        task.getMinute(),
+                                        getIntValuesFromExecutionDays(task.getExecutionDays()))
                                 .inTimeZone(TimeZone.getTimeZone(ZoneId.of(zoneId))));
         if (Objects.nonNull(task.getExecuteUntil())) {
-            Calendar executeUntil = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(zoneId)));
-            executeUntil.set(
-                    task.getExecuteUntil().getYear(),
-                    task.getExecuteUntil().getMonthValue() - 1,
-                    task.getExecuteUntil().getDayOfMonth(),
-                    task.getExecuteUntil().getHour(),
-                    task.getExecuteUntil().getMinute()
-            );
-            triggerBuilder.endAt(executeUntil.getTime());
+            Calendar executeUntilCalendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of(zoneId)));
+            executeUntilCalendar.set(Calendar.YEAR, task.getExecuteUntil().getYear());
+            executeUntilCalendar.set(Calendar.MONTH, task.getExecuteUntil().getMonthValue() - 1);
+            executeUntilCalendar.set(Calendar.DAY_OF_MONTH, task.getExecuteUntil().getDayOfMonth());
+            executeUntilCalendar.set(Calendar.HOUR_OF_DAY, task.getExecuteUntil().getHour());
+            executeUntilCalendar.set(Calendar.MINUTE, task.getExecuteUntil().getMinute());
+            executeUntilCalendar.set(Calendar.SECOND, task.getExecuteUntil().getSecond());
+            // TODO: Fix the error: "java.lang.IllegalArgumentException: End time cannot be before start time"
+            triggerBuilder.endAt(executeUntilCalendar.getTime());
         }
-        // TODO: Fix the error: "java.lang.IllegalArgumentException: End time cannot be before start time"
         return triggerBuilder.build();
     }
 
-    public static Integer[] getIntsFromDaysOfWeek(List<String> daysOfWeek) {
+    public static Integer[] getIntValuesFromExecutionDays(List<String> taskExecutionDays) {
         List<Integer> intsDaysOfWeek = new ArrayList<>();
-        for (String dayOfWeek : daysOfWeek) {
-            TaskDaysEnum daysEnum = TaskDaysEnum.getEnumFromString(dayOfWeek);
+        for (String dayOfWeek : taskExecutionDays) {
+            TaskDayEnum daysEnum = TaskDayEnum.getEnumFromString(dayOfWeek);
             switch (daysEnum) {
                 case MON -> intsDaysOfWeek.add(DateBuilder.MONDAY);
                 case TUE -> intsDaysOfWeek.add(DateBuilder.TUESDAY);
@@ -73,5 +75,4 @@ public final class TaskJobUtil {
         }
         return intsDaysOfWeek.toArray(Integer[]::new);
     }
-
 }

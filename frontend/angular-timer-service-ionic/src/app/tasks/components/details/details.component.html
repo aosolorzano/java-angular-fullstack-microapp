@@ -1,0 +1,55 @@
+<app-header pageTitle="{{taskPageTitle}}" [showBackButton]="true"></app-header>
+
+<ion-content class="ion-padding" [fullscreen]="true">
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">ID:</ion-label>
+      <ion-input type="text" [value]="task.id" readonly="true" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Name:</ion-label>
+      <ion-input type="text" [value]="task.name" readonly="true" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Description:</ion-label>
+      <ion-textarea type="text" rows="2" [value]="task.description" readonly="true" ></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Execution time:</ion-label>
+      <ion-input type="text" value="{{ task.hour | hourPipe }}:{{ task.minute | minutePipe }}" readonly="true" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Execution days:</ion-label>
+      <ion-input type="text" [value]="task.executionDays | daysPipe" readonly="true" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Execute until:</ion-label>
+      <ion-input type="text" value="{{ task.executeUntil | date:'dd MMM yyyy HH:mm' }}" readonly="true" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Created at:</ion-label>
+      <ion-input type="text" value="{{ task.createdAt | date:'dd MMM yyyy HH:mm' }}" readonly="true" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Updated at:</ion-label>
+      <ion-input type="text" value="{{ task.updatedAt | date:'dd MMM yyyy HH:mm' }}" readonly="true" ></ion-input>
+    </ion-item>
+  </ion-list>
+  <br>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" type="button" (click)="return()">
+          OK
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

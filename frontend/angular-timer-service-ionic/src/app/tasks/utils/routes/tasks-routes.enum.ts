@@ -1,5 +1,6 @@
 export enum TasksRoutesEnum {
   tasksRoute = 'tasks',
   createRoute = 'create',
-  editRoute = ':taskId'
+  editRoute = 'edit/:taskId',
+  detailsRoute = 'details/:taskId'
 }

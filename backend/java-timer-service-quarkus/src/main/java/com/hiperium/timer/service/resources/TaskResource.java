@@ -2,12 +2,10 @@ package com.hiperium.timer.service.resources;
 
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.services.TaskService;
-import com.hiperium.timer.service.utils.enums.TaskDaysEnum;
+import com.hiperium.timer.service.utils.enums.TaskDayEnum;
 import io.quarkus.security.Authenticated;
-import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.reactive.NoCache;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -23,7 +21,7 @@ import static javax.ws.rs.core.Response.Status.CREATED;
 /**
  * @author Andres Solorzano
  */
-@Path("/tasks")
+@Path("/api/task")
 @Authenticated
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,9 +31,6 @@ public class TaskResource {
 
     @Inject
     TaskService taskService;
-
-    @Inject
-    SecurityIdentity identity;
 
     @POST
     public Uni<Response> create(Task task) {
@@ -58,7 +53,7 @@ public class TaskResource {
         }
         return this.taskService.find(id)
                 .flatMap(actualTask -> this.taskService.update(actualTask, task))
-                .map(updatedTask -> Response.ok().build());
+                .map(updatedTask -> Response.ok(updatedTask).build());
     }
 
     @DELETE
@@ -83,46 +78,17 @@ public class TaskResource {
     }
 
     @GET
-    public Uni<Response> findAll() {
-        LOGGER.debug("findAll() - START");
-        return taskService.findAll()
-                .map(entityList -> Response.ok(entityList).build());
-    }
-
-    @GET
-    @Path("getJsonTemplate")
-    public Response getJsonTemplate() {
-        LOGGER.debug("getJsonTemplate() - START");
+    @Path("jsonTemplate")
+    public Response jsonTemplate() {
+        LOGGER.debug("jsonTemplate() - START");
         ZonedDateTime executeUntil = ZonedDateTime.now()
                 .plusYears(2).withMonth(12).withDayOfMonth(31)
                 .withHour(23).withMinute(59).withSecond(59).withNano(0);
         Task task = new Task("Task name", 10, 10,
-                List.of(TaskDaysEnum.TUE.name(), TaskDaysEnum.THU.name(), TaskDaysEnum.SAT.name()),
+                List.of(TaskDayEnum.TUE.name(), TaskDayEnum.THU.name(), TaskDayEnum.SAT.name()),
                 "Activate garbage collector robot.",
                 executeUntil,
                 "Execute command to start the Task.");
         return Response.ok(task).build();
-    }
-
-    @GET
-    @Path("/aboutMyUser")
-    @NoCache
-    public User aboutMyUser() {
-        LOGGER.debug("aboutMyUser() - START");
-        this.identity.getRoles().forEach(role -> LOGGER.debug("Role: " + role));
-        return new User(this.identity);
-    }
-
-    public static class User {
-
-        private final String userName;
-
-        User(SecurityIdentity identity) {
-            this.userName = identity.getPrincipal().getName();
-        }
-
-        public String getUserName() {
-            return userName;
-        }
     }
 }

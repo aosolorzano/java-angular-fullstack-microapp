@@ -35,7 +35,7 @@
                           presentation="time"
                           hour-cycle="h23"
                           [showDefaultButtons]="true"
-                          (ionChange)="executionTimeText = formatExecutionTime(popoverTime.value)">
+                          (ionChange)="executionTimeText = formatExecutionTime(popoverTime.value )">
             </ion-datetime>
           </ng-template>
         </ion-popover>
@@ -43,7 +43,7 @@
 
       <ion-item>
         <ion-label position="floating">Execution days:</ion-label>
-        <ion-select multiple="true" formControlName="daysOfWeek"
+        <ion-select multiple="true" formControlName="executionDays"
                     cancelText="Cancel" okText="Accept"
                     mode="md">
           <ion-select-option value="MON">Monday</ion-select-option>
@@ -54,7 +54,7 @@
           <ion-select-option value="SAT">Saturday</ion-select-option>
           <ion-select-option value="SUN">Sunday</ion-select-option>
         </ion-select>
-        <app-form-errors field="daysOfWeek" [formGroup]="taskForm"></app-form-errors>
+        <app-form-errors field="executionDays" [formGroup]="taskForm"></app-form-errors>
       </ion-item>
 
       <ion-item>

@@ -2,7 +2,7 @@ package com.hiperium.timer.service.utils;
 
 import com.hiperium.timer.service.annotations.DynamoDbColumnName;
 import com.hiperium.timer.service.model.Task;
-import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
+import com.hiperium.timer.service.utils.enums.TaskColumnEnum;
 import org.jboss.logging.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,10 +21,10 @@ public final class TaskBeanUtil {
     private TaskBeanUtil() {
     }
 
-    public static List<TaskColumnsEnum> getModifiedFields(Task actualTask, Task updatedTask)
+    public static List<TaskColumnEnum> getModifiedFields(Task actualTask, Task updatedTask)
             throws ReflectiveOperationException {
         LOGGER.debug("getModifiedFields() - START");
-        List<TaskColumnsEnum> changedProperties = new ArrayList<>();
+        List<TaskColumnEnum> changedProperties = new ArrayList<>();
         for (Method method : actualTask.getClass().getDeclaredMethods()) {
             if (method.getName().startsWith("get") && method.isAnnotationPresent(DynamoDbColumnName.class)) {
                 Object actualObjectValue;

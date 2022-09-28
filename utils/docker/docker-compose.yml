@@ -38,7 +38,7 @@ services:
       - tasks-network
 
   tasks-backend:
-    image: aosolorzano/java-timer-service-quarkus:1.1.0-arm64
+    image: aosolorzano/java-timer-service-quarkus:1.2.0-arm64
     container_name: timer-service-backend
     build:
       context: ../../backend/java-timer-service-quarkus

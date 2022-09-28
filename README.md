@@ -49,51 +49,28 @@ Then, install Amplify dependencies:
 ```
 npm install aws-amplify @aws-amplify/ui-angular
 ```
-Add the following line at the end of the “src/global.scss“ file:
-```
-@import '~@aws-amplify/ui-angular/theme.css';
-```
-When working with underlying aws-js-sdk, the "node" package should be included in the types' compiler option. 
-Update the “tsconfig.app.json” file:
-```
-"compilerOptions": {
-    "types" : ["node"]
-}
-```
-If you are using Angular 6 or above, you may need to add the following to the top of the “src/polyfills.ts” file:
-```
-(window as any).global = window;
-
-(window as any).process = {
-  env: { DEBUG: undefined },
-};
-```
-In the “package.json” file, update the “build“ directive to let Amplify build the project in production mode:
-```
-"build": "ng run app:build:production",
-```
 
 ### Updating Angular dependencies
 Verify the angular versions that can be updated inside the project:
 ```
-ng update
+ng edit
 ```
-Try to update the corresponding packages showed in the last command output. For example:
+Try to edit the corresponding packages showed in the last command output. For example:
 ```
-ng update @angular/cli @angular/core --allow-dirty --force
+ng edit @angular/cli @angular/core --allow-dirty --force
 ```
 And those Angular dependencies will be updated.
 
 ## Angular Reactive (NgRx) dependencies
 For NgRx, we need to install the following dependencies:
 ```
+ng add @ngrx/data
 ng add @ngrx/store
-ng add @ngrx/store-devtools
 ng add @ngrx/effects
 ng add @ngrx/router-store
-ng add @ngrx/entity
+ng add @ngrx/store-devtools
 ```
-These commands update the "app.module.ts" file with the required imports and initial configurations. See the blog article fo more details.
+These commands edit the "app.module.ts" file with the required imports and initial configurations. See the blog article fo more details.
 
 ## Ionic Commands and Configurations
 To create a new ionic project using a blank template;
@@ -169,11 +146,11 @@ aws dynamodb scan --table-name Tasks --endpoint-url http://localhost:8000
 ### Running Timer Service using Docker
 First you need to build the Timer Service container image:
 ```
-docker build -f Dockerfile.multistage-arm64 -t aosolorzano/java-timer-service-quarkus:1.1.0-arm64 .
+docker build -f Dockerfile.multistage-arm64 -t aosolorzano/java-timer-service-quarkus:1.2.0-arm64 .
 ```
 Then, you can run the Timer Service container in standalone mode:
 ```
-docker run -p 8080:8080 -d aosolorzano/java-timer-service-quarkus:1.1.0-arm64 --env-file ../../utils/docker/dev.env
+docker run -p 8080:8080 -d aosolorzano/java-timer-service-quarkus:1.2.0-arm64 --env-file ../../utils/docker/dev.env
 ```
 
 ## Other Quarkus Important Commands
@@ -195,7 +172,7 @@ mvn package -Pnative -Dquarkus.native.container-build=true
 ```
 You can then execute your native executable with:
 ```
-./target/java-timer-service-quarkus-1.1.0-runner
+./target/java-timer-service-quarkus-1.2.0-runner
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
