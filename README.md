@@ -13,7 +13,7 @@ The following image shows the overall architecture of the application on AWS.
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
 ### Project details on Medium.com
-You can follow the last detailed tutorial of the Timer Service application on my [Medium blog](https://aosolorzano.medium.com/jwt-verification-against-amazon-cognito-using-java-quarkus-55f3d22456ae).
+You can follow the last details of the Timer Service FullStack application on my [Medium blog](https://aosolorzano.medium.com/using-angular-ngrx-for-a-reactive-programming-cef032ad1e7d).
 
 ## Requirements
 1. An AWS account.
