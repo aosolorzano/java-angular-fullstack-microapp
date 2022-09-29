@@ -127,7 +127,7 @@ export class SaveComponent extends ButtonsState implements OnInit {
   private createTask() {
     const formValues = {...this.taskForm.value};
     delete formValues.executionTime;
-    let newTask: Task = formValues;
+    const newTask: Task = formValues;
     newTask.executionCommand = "python3 /home/pi/faker/faker.py";
     newTask.executeUntil = ZonedDateUtil.getStringZonedDate(ZonedDateUtil.setTimeToMidnight(new Date(newTask.executeUntil)));
     this.taskEntityService.add(newTask).subscribe(async (createdTask: Task) => {
@@ -139,7 +139,7 @@ export class SaveComponent extends ButtonsState implements OnInit {
   private updateTask() {
     const formValues = {...this.taskForm.value};
     delete formValues.executionTime;
-    let updatedTask: Task = formValues;
+    const updatedTask: Task = formValues;
     updatedTask.id = this.originalTask.id;
     updatedTask.executionCommand = this.originalTask.executionCommand;
     updatedTask.executeUntil = ZonedDateUtil.getStringZonedDate(ZonedDateUtil.setTimeToMidnight(new Date(updatedTask.executeUntil)));

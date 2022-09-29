@@ -51,7 +51,9 @@ export class AppComponent implements OnInit {
         this.loading = false;
         this.currentRoute = event.url;
         this.logger.debug('Route Navigation End: ', this.currentRoute);
-        localStorage.setItem(SharedStoreKeyEnum.actualPageKeyName, this.currentRoute);
+        if (this.currentRoute !== AuthPagesEnum.loginPage) {
+          localStorage.setItem(SharedStoreKeyEnum.actualPageKeyName, this.currentRoute);
+        }
       }
     });
     this.userLoggedIn$ = this.store.pipe(select(isUserLoggedIn));
@@ -65,6 +67,7 @@ export class AppComponent implements OnInit {
     this.loading = true;
     await Auth.signOut({global: true}).then(async () => {
       this.store.dispatch(AuthActions.logoutAction());
+      localStorage.removeItem(SharedStoreKeyEnum.actualPageKeyName);
       await this.router.navigate([AuthPagesEnum.loginPage]);
       this.loading = false;
     });
