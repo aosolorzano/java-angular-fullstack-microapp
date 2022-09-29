@@ -7,6 +7,7 @@ import {Store} from "@ngrx/store";
 import {AuthState} from "../../reactive/auth.reducers";
 import {AuthActions} from "../../reactive/action.types";
 import {TasksPagesEnum} from "../../../tasks/utils/routes/tasks-pages.enum";
+import {SharedStoreKeyEnum} from "../../../shared/utils/storage/store-keys.enum";
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,8 @@ export class LoginComponent implements OnInit {
       if (cognitoSession) {
         this.logger.debug('ngOnInit() - User is already logged in: ', cognitoSession);
         await this.loginUser(cognitoSession);
+        const activePage = localStorage.getItem(SharedStoreKeyEnum.actualPageKeyName);
+        await this.router.navigateByUrl(activePage? activePage : TasksPagesEnum.homePage);
       }
     } catch (error) {
       this.logger.debug('ngOnInit() - User is not logged in.');
@@ -42,6 +45,7 @@ export class LoginComponent implements OnInit {
       case 'signIn':
         const cognitoSession = await Auth.currentSession();
         await this.loginUser(cognitoSession);
+        await this.router.navigateByUrl(TasksPagesEnum.homePage);
         break;
       case 'signIn_failure':
         this.logger.debug('listener() - User sign in failed...');
@@ -54,7 +58,6 @@ export class LoginComponent implements OnInit {
     const cognitoUser = await Auth.currentUserInfo();
     const user = this.getUserSessionData(cognitoSession, cognitoUser);
     this.store.dispatch(AuthActions.loginAction({user}));
-    await this.router.navigateByUrl(TasksPagesEnum.homePage);
   }
 
   private getUserSessionData(cognitoSession, cognitoUser): User {

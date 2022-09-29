@@ -15,6 +15,6 @@ export function logger(reducer: ActionReducer<any>): ActionReducer<any> {
   }
 };
 
-export const metaReducers: MetaReducer<AppState>[] = !environment.production ? [logger] : [];
+export const metaReducers: MetaReducer<AppState>[] = environment.production ? [] : [logger];
 
 

@@ -1,7 +1,7 @@
 # Timer Service: A Quartz microservice that run Cron Jobs on AWS Fargate ECS.
 - **Author**: [Andres Solorzano](https://www.linkedin.com/in/aosolorzano/).
 - **Level**: Advanced.
-- **Technologies**: Ionic, Angular, Java, GraalVM, Quarkus, Quartz, PostgreSQL, Docker, AWS SDK, Amplify, DynamoDB, API Gateway, Copilot and CloudFormation.
+- **Technologies**: Ionic, Angular, NgRx, Java, GraalVM, Quarkus, Quartz, Docker, Amazon Cognito, AuroraDB (PostgreSQL), Amplify, DynamoDB, API Gateway, ECS, Bash Scripting and CloudFormation.
 
 ## Description
 This project uses the Quarkus Framework to perform CRUD operations over Tasks records stored on an AWS DynamoDB table.
@@ -12,8 +12,8 @@ The following image shows the overall architecture of the application on AWS.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
-### Tutorial details on Medium.com
-You can follow a detailed tutorial with the last changes of the Timer Service application on my [Medium blog](https://aosolorzano.medium.com/jwt-verification-against-amazon-cognito-using-java-quarkus-55f3d22456ae).
+### Project details on Medium.com
+You can follow the last detailed tutorial of the Timer Service application on my [Medium blog](https://aosolorzano.medium.com/jwt-verification-against-amazon-cognito-using-java-quarkus-55f3d22456ae).
 
 ## Requirements
 1. An AWS account.
@@ -25,15 +25,58 @@ You can follow a detailed tutorial with the last changes of the Timer Service ap
 7. [Maven](https://maven.apache.org/download.cgi).
 8. [Docker](https://www.docker.com/products/docker-desktop/) and [Docker Compose](https://github.com/docker/compose).
 
-## Deploying Timer Service to AWS
+## Deploying to AWS
 Execute the following script located at project's root folder:
 ```
 run-scripts.sh
 ```
 This script will show you an option's menu where you can select various steps to deploy the Timer Service on AWS.
 
+## BACKEND
+### Running the Timer Service Locally
+Build the Timer Service container image:
+```
+docker-compose -f utils/docker/docker-compose.yml build
+```
+Deploy the local cluster of containers using Docker Compose:
+```
+docker-compose -f utils/docker/docker-compose.yml up
+```
+
+### Getting local DynamoDB Task's data
+Execute the following command in a new terminal window:
+```
+aws dynamodb scan --table-name Tasks --endpoint-url http://localhost:8000
+```
+
+### Publishing Timer Service changes Locally
+If you want to deploy your local changes after the initial setup, you can use the following command:
+```
+docker-compose -f utils/docker/docker-compose.yml up --build
+```
+To restart a container, open a new terminal window and execute the following command at the project's root folder:
+```
+docker-compose -f utils/docker/docker-compose.yml restart nginx
+```
+
+### Publishing Timer Service changes to AWS
+Navigate to 'utils/aws' folder and then execute the following command:
+```
+copilot deploy --app timerservice --env dev --name tasks
+```
+
+### Running Timer Service using Docker
+First you need to build the Timer Service container image:
+```
+docker build -f Dockerfile.multistage-arm64 -t aosolorzano/java-timer-service-quarkus:1.2.0-arm64 .
+```
+Then, you can run the Timer Service container in standalone mode:
+```
+docker run -p 8080:8080 -d aosolorzano/java-timer-service-quarkus:1.2.0-arm64 --env-file ../../utils/docker/dev.env
+```
+
 ## FRONTEND
-### Deploying Timer Service Locally
+### Deploying required AWS services
 First, you must configure Amplify into the Ionic project:
 ```
 amplify init
@@ -49,19 +92,26 @@ Then, install Amplify dependencies:
 ```
 npm install aws-amplify @aws-amplify/ui-angular
 ```
+### Deploying the Ionic application
+To deploy the Ionic application, you must execute the following command:
+```
+ionic build
+ionic serve
+```
 
+## General Configuration
 ### Updating Angular dependencies
 Verify the angular versions that can be updated inside the project:
 ```
-ng edit
+ng update
 ```
 Try to edit the corresponding packages showed in the last command output. For example:
 ```
-ng edit @angular/cli @angular/core --allow-dirty --force
+ng update @angular/cli @angular/core --allow-dirty --force
 ```
 And those Angular dependencies will be updated.
 
-## Angular Reactive (NgRx) dependencies
+### Adding Angular Reactive (NgRx) dependencies
 For NgRx, we need to install the following dependencies:
 ```
 ng add @ngrx/data
@@ -72,7 +122,7 @@ ng add @ngrx/store-devtools
 ```
 These commands edit the "app.module.ts" file with the required imports and initial configurations. See the blog article fo more details.
 
-## Ionic Commands and Configurations
+### Other Ionic important commands
 To create a new ionic project using a blank template;
 ```
 ionic start <project-name> blank --type=angular
@@ -98,7 +148,7 @@ To create a new angular **service** without the test file, you can execute the f
 ionic g service shared/services/storage --skipTests
 ```
 
-### Animate CSS
+### Adding the Animate CSS
 [Animate.css](https://animate.style/) is a library of ready-to-use, cross-browser animations for use in your web projects.
 ```
 npm install animate.css --save
@@ -115,53 +165,14 @@ npm install date-fns --save
 npm install date-fns-tz --save
 ```
 
-## BACKEND
-### Running the Timer Service using Docker Compose
-Build the Timer Service container image:
-```
-docker-compose -f utils/docker/docker-compose.yml build
-```
-Deploy the local cluster of containers using Docker Compose:
-```
-docker-compose -f utils/docker/docker-compose.yml up
-```
-
-### Building and Deploying changes using Docker Compose
-If you want to deploy your local changes after the initial setup, you can use the following command:
-```
-docker-compose -f utils/docker/docker-compose.yml up --build
-```
-
-### Publishing Timer Service changes to AWS
-Navigate to 'utils/aws' folder and then execute the following command:
-```
-copilot deploy --app timerservice --env dev --name tasks
-```
-
-### Getting local DynamoDB Task's data using AWS CLI
-```
-aws dynamodb scan --table-name Tasks --endpoint-url http://localhost:8000
-```
-
-### Running Timer Service using Docker
-First you need to build the Timer Service container image:
-```
-docker build -f Dockerfile.multistage-arm64 -t aosolorzano/java-timer-service-quarkus:1.2.0-arm64 .
-```
-Then, you can run the Timer Service container in standalone mode:
-```
-docker run -p 8080:8080 -d aosolorzano/java-timer-service-quarkus:1.2.0-arm64 --env-file ../../utils/docker/dev.env
-```
-
-## Other Quarkus Important Commands
-### Running the application in dev mode
+### Running Quarkus application in dev mode
 You can run your application in dev mode that enables live coding using:
 ```
 mvn clean compile quarkus:dev
 ```
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
-### Creating a native executable
+### Creating Quarkus native executable
 You can create a native executable using:
 ```
 mvn package -Pnative
@@ -210,10 +221,10 @@ To delete and clean up all created resources.
 copilot app delete --name timerservice --yes
 ```
 
-## Related Guides
+## Related Quarkus Guides
 - Amazon DynamoDB ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/amazon-dynamodb.html)): Connect to Amazon DynamoDB datastore.
 - Quartz ([guide](https://quarkus.io/guides/quartz)): Schedule clustered tasks with Quartz.
 
-## RESTEasy Reactive
+### RESTEasy Reactive
 Easily start your Reactive RESTful Web Services
 [Related guide section.](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)

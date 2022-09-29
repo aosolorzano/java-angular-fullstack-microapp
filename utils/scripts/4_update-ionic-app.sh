@@ -28,9 +28,9 @@ timer_service_api_id=$(aws cloudformation describe-stacks            \
   --output text                               \
   --profile $aws_profile | tr -d '"')
 
-# REPLACING the API Gateway URL in the environment.dev.ts file
+# REPLACING the API Gateway URL in the environment.aws.ts file
 sed -i '' -e "s/timer_service_api_id/$timer_service_api_id/g; s/timer_service_api_region/$aws_region/g" \
-  ../../frontend/angular-timer-service-ionic/src/environments/environment.dev.ts
+  ../../frontend/angular-timer-service-ionic/src/environments/environment.aws.ts
 echo "DONE!"
 
 echo ""

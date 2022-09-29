@@ -32,7 +32,7 @@ export class TasksComponent implements OnInit {
 
   public async ngOnInit() {
     this.logger.debug('ngOnInit() - START');
-    Hub.listen('auth', this.listener);
+    Hub.listen('auth', this.logoutListener);
     this.tasks$ = this.taskEntityService.entities$;
     this.logger.debug('ngOnInit() - END');
   }
@@ -113,12 +113,12 @@ export class TasksComponent implements OnInit {
     await toast.present();
   }
 
-  private listener = async (data) => {
-    this.logger.debug('listener() - START: ' + data.payload.event);
+  private logoutListener = async (data) => {
+    this.logger.debug('logoutListener() - START: ' + data.payload.event);
     if (data.payload.event === 'signOut') {
-      this.logger.debug('listener() - Clearing NgRx Tasks Store.');
+      this.logger.debug('logoutListener() - Clearing NgRx Tasks Store.');
       this.taskEntityService.clearCache();
     }
-    this.logger.debug('listener() - END');
+    this.logger.debug('logoutListener() - END');
   }
 }

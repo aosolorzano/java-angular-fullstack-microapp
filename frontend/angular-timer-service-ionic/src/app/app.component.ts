@@ -62,9 +62,12 @@ export class AppComponent implements OnInit {
 
   public async signOut() {
     this.logger.debug('signOut() - START');
-    this.store.dispatch(AuthActions.logoutAction());
-    await Auth.signOut({global: true});
-    await this.router.navigateByUrl(AuthPagesEnum.loginPage);
+    this.loading = true;
+    await Auth.signOut({global: true}).then(async () => {
+      this.store.dispatch(AuthActions.logoutAction());
+      await this.router.navigate([AuthPagesEnum.loginPage]);
+      this.loading = false;
+    });
     this.logger.debug('signOut() - END');
   }
 }

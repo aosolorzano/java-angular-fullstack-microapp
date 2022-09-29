@@ -21,7 +21,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ../dynamodb:/home/dynamodblocal/data
+      - ../data/dynamodb:/home/dynamodblocal/data
     networks:
       - tasks-network
 

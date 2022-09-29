@@ -4,7 +4,7 @@ import {Store} from "@ngrx/store";
 import {Logger} from "aws-amplify";
 import {LOG_TYPE} from "@aws-amplify/core/lib-esm/Logger";
 import {AppState} from "../../shared/reactive/reducers/app.reducer";
-import {catchError, exhaustMap, Observable, throwError} from "rxjs";
+import {catchError, EMPTY, exhaustMap, Observable} from "rxjs";
 import {getSessionToken} from "../../auth/reactive/auth.selectors";
 import {environment} from "../../../environments/environment";
 
@@ -29,19 +29,20 @@ export class TasksInterceptorService implements HttpInterceptor {
             this.logger.debug('intercept() - HTTP Request: ', request);
           } else {
             this.logger.debug('intercept() - No token found. Removing JWT from request header.');
-            request = this.verifyAuthToken(request);
+            request = this.verifyAndRemoveAuthToken(request);
           }
           return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
               this.logger.debug('intercept() - ERROR: ', error);
-              const err = new Error(error.message);
-              return throwError(() => err);
+              // TODO: All errors are dispatched to the Store and they are not serialized. This is a problem. So, we need to
+              //  serialize the error before dispatch it to the Store.
+              return EMPTY;
             }));
         })
       );
   }
 
-  private verifyAuthToken(request: HttpRequest<any>) {
+  private verifyAndRemoveAuthToken(request: HttpRequest<any>) {
     if (request.headers.has('Authorization')) {
       request = request.clone({
         headers: request.headers.delete('Authorization')
